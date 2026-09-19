@@ -2,7 +2,8 @@ import os
 import sys
 
 # Ensure data directory exists
-DATA_DIR = os.environ.get('DATA_DIR', os.path.join(os.path.dirname(__file__), 'data'))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.environ.get('DATA_DIR', os.path.join(BASE_DIR, 'data'))
 os.makedirs(DATA_DIR, exist_ok=True)
 
 # Initialize database before app is created
