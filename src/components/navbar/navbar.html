@@ -1,0 +1,32 @@
+<!-- Navbar Component -->
+<!-- Usage: substitute {{variant}}, {{logo}}, {{brandName}}, {{navItems}}, {{actions}}, {{mobileMenu}} -->
+<nav class="navbar navbar-${variant}" role="navigation" aria-label="Main navigation">
+  <div class="navbar-container">
+    <a href="/" class="navbar-brand" aria-label="${brandName} - Home">
+      ${logo ? `<img src="${logo}" alt="" class="navbar-logo" aria-hidden="true">` : `<span class="navbar-logo-text">${brandName}</span>`}
+      ${brandName && logo ? `<span class="navbar-brand-text">${brandName}</span>` : ''}
+    </a>
+
+    <button class="navbar-toggle" aria-expanded="false" aria-controls="navbar-menu" aria-label="Toggle menu" type="button">
+      <span class="navbar-toggle-icon" aria-hidden="true"></span>
+    </button>
+
+    <div class="navbar-collapse" id="navbar-menu" role="navigation">
+      <ul class="navbar-nav" role="menubar">
+        ${navItems.map(item => `
+        <li role="none">
+          <a href="${item.href}" class="navbar-link" role="menuitem" ${item.active ? 'aria-current="page"' : ''}>${item.label}</a>
+        </li>
+        `).join('')}
+      </ul>
+
+      ${actions ? `
+      <div class="navbar-actions" role="group">
+        ${actions.map(action => `
+        <a href="${action.href}" class="btn btn-${action.variant} btn-sm" role="button">${action.label}</a>
+        `).join('')}
+      </div>
+      ` : ''}
+    </div>
+  </div>
+</nav>

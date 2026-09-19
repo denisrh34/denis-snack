@@ -1,0 +1,99 @@
+<!-- Form Components -->
+<!-- Input -->
+<div class="form-field">
+  ${label ? `<label class="form-label" for="${id}">${label}${required ? '<span class="required" aria-hidden="true">*</span>' : ''}</label>` : ''}
+  <input
+    type="${type}"
+    id="${id}"
+    name="${name}"
+    class="form-input ${error ? 'form-input-error' : ''}"
+    placeholder="${placeholder}"
+    value="${value}"
+    ${required ? 'required' : ''}
+    ${disabled ? 'disabled' : ''}
+    ${error ? 'aria-invalid="true" aria-describedby="' + id + '-error"' : ''}
+    ${helpText ? 'aria-describedby="' + id + '-help"' : ''}
+  />
+  ${error ? `<p id="${id}-error" class="form-error" role="alert">${error}</p>` : ''}
+  ${helpText && !error ? `<p id="${id}-help" class="form-help">${helpText}</p>` : ''}
+</div>
+
+<!-- Select -->
+<div class="form-field">
+  ${label ? `<label class="form-label" for="${id}">${label}${required ? '<span class="required" aria-hidden="true">*</span>' : ''}</label>` : ''}
+  <div class="form-select-wrapper">
+    <select
+      id="${id}"
+      name="${name}"
+      class="form-select ${error ? 'form-input-error' : ''}"
+      ${required ? 'required' : ''}
+      ${disabled ? 'disabled' : ''}
+      ${error ? 'aria-invalid="true" aria-describedby="' + id + '-error"' : ''}
+    >
+      ${options.map(opt => `<option value="${opt.value}" ${opt.selected ? 'selected' : ''}>${opt.label}</option>`).join('')}
+    </select>
+  </div>
+  ${error ? `<p id="${id}-error" class="form-error" role="alert">${error}</p>` : ''}
+  ${helpText && !error ? `<p id="${id}-help" class="form-help">${helpText}</p>` : ''}
+</div>
+
+<!-- Textarea -->
+<div class="form-field">
+  ${label ? `<label class="form-label" for="${id}">${label}${required ? '<span class="required" aria-hidden="true">*</span>' : ''}</label>` : ''}
+  <textarea
+    id="${id}"
+    name="${name}"
+    class="form-textarea ${error ? 'form-input-error' : ''}"
+    placeholder="${placeholder}"
+    ${required ? 'required' : ''}
+    ${disabled ? 'disabled' : ''}
+    rows="${rows}"
+    ${error ? 'aria-invalid="true" aria-describedby="' + id + '-error"' : ''}
+    ${helpText ? 'aria-describedby="' + id + '-help"' : ''}
+  >${value}</textarea>
+  ${error ? `<p id="${id}-error" class="form-error" role="alert">${error}</p>` : ''}
+  ${helpText && !error ? `<p id="${id}-help" class="form-help">${helpText}</p>` : ''}
+</div>
+
+<!-- Checkbox -->
+<div class="form-field form-field-checkbox">
+  <label class="form-checkbox-label">
+    <input
+      type="checkbox"
+      id="${id}"
+      name="${name}"
+      class="form-checkbox"
+      value="${value}"
+      ${checked ? 'checked' : ''}
+      ${required ? 'required' : ''}
+      ${disabled ? 'disabled' : ''}
+    />
+    <span class="form-checkbox-box" aria-hidden="true"></span>
+    <span class="form-checkbox-text">${label}</span>
+  </label>
+  ${error ? `<p id="${id}-error" class="form-error" role="alert">${error}</p>` : ''}
+  ${helpText && !error ? `<p id="${id}-help" class="form-help">${helpText}</p>` : ''}
+</div>
+
+<!-- Radio Group -->
+<fieldset class="form-field form-field-radio">
+  ${label ? `<legend class="form-label">${label}${required ? '<span class="required" aria-hidden="true">*</span>' : ''}</legend>` : ''}
+  <div class="form-radio-group" role="radiogroup" aria-label="${label || ''}">
+    ${options.map((opt, i) => `
+    <label class="form-radio-label">
+      <input
+        type="radio"
+        name="${name}"
+        value="${opt.value}"
+        class="form-radio"
+        ${opt.checked ? 'checked' : ''}
+        ${disabled ? 'disabled' : ''}
+      />
+      <span class="form-radio-box" aria-hidden="true"></span>
+      <span class="form-radio-text">${opt.label}</span>
+    </label>
+    `).join('')}
+  </div>
+  ${error ? `<p id="${id}-error" class="form-error" role="alert">${error}</p>` : ''}
+  ${helpText && !error ? `<p id="${id}-help" class="form-help">${helpText}</p>` : ''}
+</div>

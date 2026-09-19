@@ -1,0 +1,39 @@
+<!-- Accordion Component -->
+<!-- Usage: substitute {{id}}, {{items}}, {{allowMultiple}}, {{variant}} -->
+<div class="accordion accordion-${variant}" id="${id}" ${allowMultiple ? 'data-multiple="true"' : ''}>
+  ${items.map((item, i) => `
+  <div class="accordion-item">
+    <h3 class="accordion-header">
+      <button
+        class="accordion-trigger"
+        type="button"
+        aria-expanded="${item.open ? 'true' : 'false'}"
+        aria-controls="${id}-content-${i}"
+        id="${id}-trigger-${i}"
+        data-accordion-index="${i}"
+      >
+        <span class="accordion-trigger-content">
+          ${item.icon ? `<span class="accordion-trigger-icon" aria-hidden="true">${item.icon}</span>` : ''}
+          <span class="accordion-trigger-label">${item.label}</span>
+        </span>
+        <span class="accordion-trigger-icon-chevron" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </span>
+      </button>
+    </h3>
+    <div
+      class="accordion-content"
+      id="${id}-content-${i}"
+      role="region"
+      aria-labelledby="${id}-trigger-${i}"
+      hidden="${!item.open}"
+    >
+      <div class="accordion-content-inner">
+        ${item.content}
+      </div>
+    </div>
+  </div>
+  `).join('')}
+</div>

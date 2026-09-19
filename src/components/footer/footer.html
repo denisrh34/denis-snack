@@ -1,0 +1,43 @@
+<!-- Footer Component -->
+<!-- Usage: substitute {{variant}}, {{brandName}}, {{brandLogo}}, {{tagline}}, {{columns}}, {{socialLinks}}, {{bottomText}} -->
+<footer class="footer footer-${variant}" role="contentinfo">
+  <div class="footer-container">
+    ${variant === 'simple' ? `
+    <div class="footer-simple">
+      ${brandLogo ? `<img src="${brandLogo}" alt="" class="footer-logo" aria-hidden="true">` : ''}
+      ${brandName ? `<p class="footer-brand">${brandName}</p>` : ''}
+      ${tagline ? `<p class="footer-tagline">${tagline}</p>` : ''}
+      ${socialLinks ? `
+      <div class="footer-social" role="list">
+        ${socialLinks.map(s => `<a href="${s.href}" class="footer-social-link" aria-label="${s.label}" role="listitem" target="_blank" rel="noopener">${s.icon}</a>`).join('')}
+      </div>
+      ` : ''}
+      ${bottomText ? `<p class="footer-bottom">${bottomText}</p>` : ''}
+    </div>
+    ` : `
+    <div class="footer-grid">
+      <div class="footer-brand-col">
+        ${brandLogo ? `<img src="${brandLogo}" alt="" class="footer-logo" aria-hidden="true">` : ''}
+        ${brandName ? `<p class="footer-brand">${brandName}</p>` : ''}
+        ${tagline ? `<p class="footer-tagline">${tagline}</p>` : ''}
+        ${socialLinks ? `
+        <div class="footer-social" role="list">
+          ${socialLinks.map(s => `<a href="${s.href}" class="footer-social-link" aria-label="${s.label}" role="listitem" target="_blank" rel="noopener">${s.icon}</a>`).join('')}
+        </div>
+        ` : ''}
+      </div>
+      <div class="footer-links">
+        ${columns.map(col => `
+        <nav class="footer-col" aria-label="${col.title}">
+          ${col.title ? `<h3 class="footer-col-title">${col.title}</h3>` : ''}
+          <ul class="footer-col-list" role="list">
+            ${col.links.map(link => `<li><a href="${link.href}" class="footer-link">${link.label}</a></li>`).join('')}
+          </ul>
+        </nav>
+        `).join('')}
+      </div>
+    </div>
+    ${bottomText ? `<div class="footer-bottom-bar"><p class="footer-bottom">${bottomText}</p></div>` : ''}
+    `}
+  </div>
+</footer>

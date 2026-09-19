@@ -1,0 +1,34 @@
+<!-- Tabs Component -->
+<!-- Usage: substitute {{id}}, {{variant}}, {{tabs}}, {{orientation}} -->
+<div class="tabs tabs-${variant}" id="${id}" role="tablist" aria-orientation="${orientation}">
+  <div class="tabs-list" role="presentation">
+    ${tabs.map((tab, i) => `
+    <button
+      class="tabs-trigger ${i === 0 ? 'tabs-trigger-active' : ''}"
+      role="tab"
+      id="${id}-tab-${i}"
+      aria-selected="${i === 0 ? 'true' : 'false'}"
+      aria-controls="${id}-panel-${i}"
+      tabindex="${i === 0 ? '0' : '-1'}"
+      type="button"
+      data-tab-index="${i}"
+    >
+      ${tab.icon ? `<span class="tabs-trigger-icon" aria-hidden="true">${tab.icon}</span>` : ''}
+      <span class="tabs-trigger-label">${tab.label}</span>
+      ${tab.badge ? `<span class="tabs-trigger-badge">${tab.badge}</span>` : ''}
+    </button>
+    `).join('')}
+    <div class="tabs-indicator" aria-hidden="true"></div>
+  </div>
+  ${tabs.map((tab, i) => `
+  <div
+    class="tabs-panel ${i === 0 ? 'tabs-panel-active' : ''}"
+    role="tabpanel"
+    id="${id}-panel-${i}"
+    aria-labelledby="${id}-tab-${i}"
+    hidden="${i !== 0}"
+  >
+    ${tab.content}
+  </div>
+  `).join('')}
+</div>

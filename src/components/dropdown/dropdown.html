@@ -1,0 +1,41 @@
+<!-- Dropdown Component -->
+<!-- Usage: substitute {{id}}, {{trigger}}, {{items}}, {{placement}}, {{align}} -->
+<div class="dropdown" id="${id}" role="menu">
+  <button
+    class="dropdown-trigger"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    aria-controls="${id}-menu"
+    data-dropdown-trigger
+  >
+    ${trigger}
+  </button>
+  <div
+    class="dropdown-menu"
+    id="${id}-menu"
+    role="menu"
+    hidden
+    data-placement="${placement}"
+    data-align="${align}"
+  >
+    <div class="dropdown-content">
+      ${items.map((item, i) => item.divider ? `
+      <hr class="dropdown-divider" role="separator" aria-orientation="horizontal">
+      ` : `
+      <button
+        class="dropdown-item ${item.disabled ? 'dropdown-item-disabled' : ''}"
+        role="menuitem"
+        tabindex="-1"
+        type="button"
+        ${item.disabled ? 'disabled aria-disabled="true"' : ''}
+        data-value="${item.value}"
+      >
+        ${item.icon ? `<span class="dropdown-item-icon" aria-hidden="true">${item.icon}</span>` : ''}
+        <span class="dropdown-item-label">${item.label}</span>
+        ${item.shortcut ? `<span class="dropdown-item-shortcut" aria-hidden="true">${item.shortcut}</span>` : ''}
+      </button>
+      `).join('')}
+    </div>
+  </div>
+</div>

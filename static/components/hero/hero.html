@@ -1,0 +1,64 @@
+<!-- Hero Component -->
+<!-- Usage: substitute {{variant}}, {{title}}, {{subtitle}}, {{ctaPrimary}}, {{ctaSecondary}}, {{image}}, {{imageAlt}}, {{stats}} -->
+<section class="hero hero-${variant}" aria-labelledby="hero-title">
+  ${variant === 'split' ? `
+  <div class="hero-grid">
+    <div class="hero-content">
+      ${title ? `<h1 id="hero-title" class="hero-title">${title}</h1>` : ''}
+      ${subtitle ? `<p class="hero-subtitle">${subtitle}</p>` : ''}
+      ${(ctaPrimary || ctaSecondary) ? `
+      <div class="hero-actions">
+        ${ctaPrimary ? `<a href="${ctaPrimary.href}" class="btn btn-primary btn-lg">${ctaPrimary.label}</a>` : ''}
+        ${ctaSecondary ? `<a href="${ctaSecondary.href}" class="btn btn-outline btn-lg">${ctaSecondary.label}</a>` : ''}
+      </div>
+      ` : ''}
+      ${stats ? `
+      <div class="hero-stats" role="list">
+        ${stats.map(s => `
+        <div class="hero-stat" role="listitem">
+          <span class="hero-stat-value">${s.value}</span>
+          <span class="hero-stat-label">${s.label}</span>
+        </div>
+        `).join('')}
+      </div>
+      ` : ''}
+    </div>
+    ${image ? `
+    <div class="hero-media" aria-hidden="true">
+      <img src="${image}" alt="${imageAlt}" class="hero-image">
+    </div>
+    ` : ''}
+  </div>
+  ` : `
+  <div class="hero-content">
+    ${image && variant !== 'video' ? `
+    <div class="hero-badge" aria-hidden="true">
+      <img src="${image}" alt="${imageAlt}" class="hero-badge-image">
+    </div>
+    ` : ''}
+    ${title ? `<h1 id="hero-title" class="hero-title">${title}</h1>` : ''}
+    ${subtitle ? `<p class="hero-subtitle">${subtitle}</p>` : ''}
+    ${(ctaPrimary || ctaSecondary) ? `
+    <div class="hero-actions">
+      ${ctaPrimary ? `<a href="${ctaPrimary.href}" class="btn btn-primary btn-lg">${ctaPrimary.label}</a>` : ''}
+      ${ctaSecondary ? `<a href="${ctaSecondary.href}" class="btn btn-outline btn-lg">${ctaSecondary.label}</a>` : ''}
+    </div>
+    ` : ''}
+    ${stats ? `
+    <div class="hero-stats" role="list">
+      ${stats.map(s => `
+      <div class="hero-stat" role="listitem">
+        <span class="hero-stat-value">${s.value}</span>
+        <span class="hero-stat-label">${s.label}</span>
+      </div>
+      `).join('')}
+    </div>
+    ` : ''}
+    ${variant === 'video' && videoUrl ? `
+    <div class="hero-video">
+      <video src="${videoUrl}" autoplay muted loop playsinline aria-hidden="true"></video>
+    </div>
+    ` : ''}
+  </div>
+  `}
+</section>

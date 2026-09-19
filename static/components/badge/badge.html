@@ -1,0 +1,6 @@
+<!-- Badge Component -->
+<!-- Usage: substitute {{variant}}, {{size}}, {{label}}, {{icon}}, {{dot}} -->
+<span class="badge badge-${variant} badge-${size}" ${dot ? 'data-dot="true"' : ''}>
+  ${icon}
+  <span class="badge-label">${label}</span>
+</span>

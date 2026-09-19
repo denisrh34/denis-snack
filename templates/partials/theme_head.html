@@ -1,6 +1,9 @@
 <link href="https://fonts.googleapis.com/css2?family={{ theme.font_display|replace(' ', '+') }}:wght@400;500;600;700;800&family={{ theme.font_body|replace(' ', '+') }}:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Design Tokens CSS Variables (base) -->
+<link rel="stylesheet" href="/static/components/css-vars.css">
 <style>
 :root{
+    /* Theme overrides - these override design token defaults */
     --c-primary: {{ theme.primary }};
     --c-secondary: {{ theme.secondary }};
     --c-accent: {{ theme.accent }};
@@ -10,6 +13,11 @@
     --c-info: {{ theme.info }};
     --ft-display: "{{ theme.font_display }}";
     --ft-body: "{{ theme.font_body }}";
+
+    /* Map theme colors to design token semantic colors */
+    --color-primary-500: {{ theme.primary }};
+    --color-secondary-500: {{ theme.secondary }};
+    --color-accent-500: {{ theme.accent }};
 }
 body{
     font-family: var(--ft-body), sans-serif !important;

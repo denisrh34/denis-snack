@@ -1,0 +1,10 @@
+<!-- Avatar Component -->
+<!-- Usage: substitute {{size}}, {{src}}, {{alt}}, {{name}}, {{initials}}, {{status}}, {{shape}} -->
+<div class="avatar avatar-${size} avatar-${shape}" ${src ? '' : 'aria-label="User avatar"'}>
+  ${src ? `<img src="${src}" alt="${alt}" class="avatar-image" loading="lazy">` : `
+    <span class="avatar-fallback" aria-hidden="true">
+      ${initials || name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || '?'}
+    </span>
+  `}
+  ${status ? `<span class="avatar-status avatar-status-${status}" aria-label="${status}"></span>` : ''}
+</div>

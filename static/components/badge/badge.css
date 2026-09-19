@@ -1,0 +1,129 @@
+/* Badge Component Styles */
+
+.badge {
+  --badge-bg: var(--color-primary-100, #FFE8D6);
+  --badge-text: var(--color-primary-700, #C2410C);
+  --badge-border: transparent;
+  --badge-radius: var(--radius-full, 9999px);
+  --badge-padding-y: var(--spacing-0.5, 0.125rem);
+  --badge-padding-x: var(--spacing-2, 0.5rem);
+  --badge-font-size: var(--font-size-xs, 0.75rem);
+  --badge-font-weight: var(--font-weight-semibold, 600);
+  --badge-gap: var(--spacing-1, 0.25rem);
+  --badge-dot-size: 6px;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--badge-gap);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+  border: 1px solid var(--badge-border);
+  border-radius: var(--badge-radius);
+  padding: var(--badge-padding-y) var(--badge-padding-x);
+  font-size: var(--badge-font-size);
+  font-weight: var(--badge-font-weight);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.badge-label {
+  display: inline-block;
+}
+
+.badge[data-dot="true"]::before {
+  content: '';
+  width: var(--badge-dot-size);
+  height: var(--badge-dot-size);
+  border-radius: var(--radius-full, 9999px);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Variants */
+.badge-default {
+  --badge-bg: var(--color-neutral-100, #F5F5F5);
+  --badge-text: var(--color-neutral-700, #404040);
+}
+
+.badge-primary {
+  --badge-bg: var(--color-primary-100, #FFE8D6);
+  --badge-text: var(--color-primary-700, #C2410C);
+}
+
+.badge-secondary {
+  --badge-bg: var(--color-secondary-100, #D6E8F8);
+  --badge-text: var(--color-secondary-700, #0369A1);
+}
+
+.badge-success {
+  --badge-bg: var(--color-semantic-success-100, #D1FAE5);
+  --badge-text: var(--color-semantic-success-700, #065F46);
+}
+
+.badge-warning {
+  --badge-bg: var(--color-semantic-warning-100, #FEF3C7);
+  --badge-text: var(--color-semantic-warning-700, #92400E);
+}
+
+.badge-error,
+.badge-danger {
+  --badge-bg: var(--color-semantic-error-100, #FEE2E2);
+  --badge-text: var(--color-semantic-error-700, #991B1B);
+}
+
+.badge-info {
+  --badge-bg: var(--color-semantic-info-100, #DBEAFE);
+  --badge-text: var(--color-semantic-info-700, #1E40AF);
+}
+
+.badge-outline {
+  --badge-bg: transparent;
+  --badge-border: currentColor;
+}
+
+/* Sizes */
+.badge-xs {
+  --badge-padding-y: var(--spacing-0.5, 0.125rem);
+  --badge-padding-x: var(--spacing-1.5, 0.375rem);
+  --badge-font-size: 0.625rem;
+  --badge-dot-size: 4px;
+}
+
+.badge-sm {
+  --badge-padding-y: var(--spacing-0.5, 0.125rem);
+  --badge-padding-x: var(--spacing-2, 0.5rem);
+  --badge-font-size: var(--font-size-xs, 0.75rem);
+  --badge-dot-size: 6px;
+}
+
+.badge-md {
+  --badge-padding-y: var(--spacing-1, 0.25rem);
+  --badge-padding-x: var(--spacing-2.5, 0.625rem);
+  --badge-font-size: var(--font-size-sm, 0.875rem);
+  --badge-dot-size: 8px;
+}
+
+.badge-lg {
+  --badge-padding-y: var(--spacing-1.5, 0.375rem);
+  --badge-padding-x: var(--spacing-3, 0.75rem);
+  --badge-font-size: var(--font-size-base, 1rem);
+  --badge-dot-size: 10px;
+}
+
+/* Dot only variant */
+.badge-dot {
+  --badge-padding-y: 0;
+  --badge-padding-x: 0;
+  width: var(--badge-dot-size);
+  height: var(--badge-dot-size);
+  border-radius: var(--radius-full, 9999px);
+}
+
+.badge-dot .badge-label {
+  display: none;
+}
+
+/* Pill variant (larger radius) */
+.badge-pill {
+  --badge-radius: var(--radius-full, 9999px);
+}

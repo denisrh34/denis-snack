@@ -1,0 +1,22 @@
+<!-- Card Component -->
+<!-- Usage: substitute {{variant}}, {{header}}, {{content}}, {{footer}}, {{image}}, {{imageAlt}} -->
+<article class="card card-${variant}" ${image ? 'style="--card-image: url(' + image + ');"' : ''}>
+  ${image ? `
+  <div class="card-image" style="background-image: var(--card-image);" role="img" aria-label="${imageAlt}"></div>
+  ` : ''}
+  <div class="card-body">
+    ${header ? `
+    <header class="card-header">
+      ${header}
+    </header>
+    ` : ''}
+    <div class="card-content">
+      ${content}
+    </div>
+    ${footer ? `
+    <footer class="card-footer">
+      ${footer}
+    </footer>
+    ` : ''}
+  </div>
+</article>

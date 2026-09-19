@@ -60,90 +60,74 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
     {% include 'partials/theme_head.html' %}
+    <!-- Component Library Bundle -->
+    <link rel="stylesheet" href="/static/components/bundle.css">
+    <script src="/static/components/bundle.js" defer></script>
 </head>
 <body class="bg-light font-body {{ theme.body_class }}">
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="/" class="flex items-center gap-2">
-                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-lg">{{ theme.logo_text or 'D' }}</span>{% endif %}</div>
-                    <span class="font-display font-bold text-xl text-dark">{{ settings.get('shop_name', 'Denis Snack') }}</span>
-                </a>
-                <div class="hidden md:flex items-center gap-5">
-                    <a href="/" class="text-dark hover:text-primary transition font-medium">Beranda</a>
-                    <a href="/#menu" class="text-dark hover:text-primary transition font-medium">Menu</a>
-                    <form action="/" method="GET" class="relative">
-                        <input type="text" name="q" placeholder="Cari produk..." value="{{ search }}" class="pl-4 pr-10 py-2 rounded-full border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm w-48">
-                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</button>
-                    </form>
-                    <a href="/#keranjang" class="bg-primary text-white px-5 py-2 rounded-full hover:bg-orange-600 transition font-semibold flex items-center gap-2">
-                        🛒 <span id="cart-count" class="bg-white text-primary rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold hidden">0</span>
-                    </a>
-                    {% if session.get('customer_id') %}
-                    <div class="relative group">
-                        <button class="flex items-center gap-2 text-dark hover:text-primary transition font-semibold">👤 {{ session.get('customer_name') }}</button>
-                        <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border py-2 hidden group-hover:block z-50">
-                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📋 Profil Saya</a>
-                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📦 Pesanan Saya</a>
-                            <a href="/logout" class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100">🚪 Logout</a>
-                        </div>
-                    </div>
-                    {% else %}
-                    <a href="/login" class="text-dark hover:text-primary transition font-medium">Masuk</a>
-                    <a href="/register" class="bg-secondary text-white px-5 py-2 rounded-full hover:bg-blue-700 transition font-semibold">Daftar</a>
-                    {% endif %}
-                </div>
-                <button id="menuBtn" class="md:hidden text-dark text-2xl">☰</button>
-            </div>
-        </div>
-        <div id="mobileMenu" class="hidden md:hidden bg-white border-t px-4 py-4 space-y-3">
-            <a href="/" class="block text-dark hover:text-primary font-medium">Beranda</a>
-            <a href="/#menu" class="block text-dark hover:text-primary font-medium">Menu</a>
-            <form action="/" method="GET" class="relative">
-                <input type="text" name="q" placeholder="Cari produk..." value="{{ search }}" class="w-full pl-4 pr-10 py-2 rounded-full border text-sm">
-                <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</button>
-            </form>
+    <!-- Navbar Component -->
+    <nav class="navbar navbar-default" role="navigation" aria-label="Main navigation">
+      <div class="navbar-container">
+        <a href="/" class="navbar-brand" aria-label="{{ settings.get('shop_name', 'Denis Snack') }} - Home">
+          {% if theme.logo_type == 'image' and theme.logo_image %}
+          <img src="/uploads/{{ theme.logo_image }}" alt="" class="navbar-logo" aria-hidden="true">
+          {% else %}
+          <span class="navbar-logo-text">{{ theme.logo_text or 'D' }}</span>
+          {% endif %}
+          <span class="navbar-brand-text">{{ settings.get('shop_name', 'Denis Snack') }}</span>
+        </a>
+
+        <button class="navbar-toggle" aria-expanded="false" aria-controls="navbar-menu" aria-label="Toggle menu" type="button">
+          <span class="navbar-toggle-icon" aria-hidden="true"></span>
+        </button>
+
+        <div class="navbar-collapse" id="navbar-menu" role="navigation">
+          <ul class="navbar-nav" role="menubar">
+            <li role="none"><a href="/" class="navbar-link" role="menuitem">Beranda</a></li>
+            <li role="none"><a href="/#menu" class="navbar-link" role="menuitem">Menu</a></li>
+          </ul>
+
+          <form action="/" method="GET" class="navbar-search" role="search">
+            <label for="navbar-search" class="sr-only">Cari produk</label>
+            <input type="text" name="q" id="navbar-search" placeholder="Cari produk..." value="{{ search }}" class="navbar-search-input">
+            <button type="submit" class="navbar-search-btn" aria-label="Cari">🔍</button>
+          </form>
+
+          <div class="navbar-actions" role="group">
+            <a href="/#keranjang" class="btn btn-primary btn-md" role="button">
+              🛒 <span id="cart-count" class="btn-badge">0</span>
+            </a>
             {% if session.get('customer_id') %}
-            <a href="/profile" class="block text-dark hover:text-primary font-medium">👤 Profil</a>
-            <a href="/logout" class="block text-red-500 font-medium">🚪 Logout</a>
+            <div class="navbar-user dropdown" data-dropdown>
+              <button class="navbar-user-btn dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="navbar-user-menu">
+                👤 {{ session.get('customer_name') }}
+              </button>
+              <div class="dropdown-menu" id="navbar-user-menu" role="menu" hidden data-placement="bottom" data-align="end">
+                <a href="/profile" class="dropdown-item" role="menuitem">📋 Profil Saya</a>
+                <a href="/profile" class="dropdown-item" role="menuitem">📦 Pesanan Saya</a>
+                <a href="/logout" class="dropdown-item" role="menuitem">🚪 Logout</a>
+              </div>
+            </div>
             {% else %}
-            <a href="/login" class="block text-dark hover:text-primary font-medium">Masuk</a>
-            <a href="/register" class="block bg-secondary text-white px-5 py-2 rounded-full text-center font-semibold">Daftar</a>
+            <a href="/login" class="btn btn-ghost btn-md">Masuk</a>
+            <a href="/register" class="btn btn-secondary btn-md">Daftar</a>
             {% endif %}
+          </div>
         </div>
+      </div>
     </nav>
 
     <main>
-        {% set hero_style = theme.hero_style if theme.hero_style in ('default', 'image') else 'default' %}
-        {% set hero_txt = 'text-white' if hero_style == 'image' else 'text-dark' %}
-        {% set hero_sub = 'text-white/90' if hero_style == 'image' else 'text-gray-600' %}
-        {% if hero_style == 'image' and theme.hero_image %}
-        <section id="beranda" class="relative py-16 md:py-20 overflow-hidden">
-            <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('/uploads/{{ theme.hero_image }}')"></div>
-            <div class="absolute inset-0 bg-dark/50"></div>
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {% else %}
-        <section id="beranda" class="bg-gradient-to-br from-primary/10 via-accent/5 to-light py-16 md:py-20">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {% endif %}
-                <div class="grid md:grid-cols-2 gap-10 items-center">
-                    <div>
-                        <span class="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold mb-4">Camilan Favorit Semua Orang</span>
-                        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold {{ hero_txt }} leading-tight mb-6">Camilan Renyah, <span class="text-primary">Teman Setiap Momen</span></h1>
-                        <p class="{{ hero_sub }} text-lg mb-8 max-w-lg">Keripik, kue kering, dan aneka snack pilihan yang siap menemani waktu santai kamu.</p>
-                        <a href="#menu" class="inline-block bg-primary text-white px-8 py-3 rounded-full hover:bg-orange-600 transition font-semibold text-lg shadow-lg shadow-primary/30">Lihat Menu</a>
-                    </div>
-                    <div class="flex justify-center">
-                        <div class="relative w-72 h-72 md:w-96 md:h-96">
-                            <div class="absolute inset-0 bg-primary/20 rounded-full blur-3xl"></div>
-                            <div class="absolute inset-8 bg-accent/20 rounded-full blur-2xl"></div>
-                            <div class="absolute inset-16 bg-white rounded-full shadow-xl flex items-center justify-center">
-                                <span class="text-7xl md:text-8xl">🍿</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Hero Component -->
+        <section class="hero hero-centered" aria-labelledby="hero-title" id="beranda">
+          <div class="hero-content">
+            <span class="hero-badge">Camilan Favorit Semua Orang</span>
+            <h1 id="hero-title" class="hero-title">Camilan Renyah, <span class="text-primary">Teman Setiap Momen</span></h1>
+            <p class="hero-subtitle">Keripik, kue kering, dan aneka snack pilihan yang siap menemani waktu santai kamu.</p>
+            <div class="hero-actions">
+              <a href="#menu" class="btn btn-primary btn-lg">Lihat Menu</a>
             </div>
+          </div>
         </section>
 
         <section id="kategori" class="py-12 bg-white">
@@ -171,21 +155,28 @@
                     </div>
                     <a href="#menu" class="hidden md:inline-block text-primary font-semibold hover:underline">Lihat Semua →</a>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" role="list">
                     {% for p in featured %}
-                    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
-                        <a href="/product/{{ p.id }}">
-                            <div class="h-44 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
-                                {% if p.photo %}<img src="/uploads/{{ p.photo }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">{% else %}<span class="text-6xl group-hover:scale-110 transition-transform">{{ p.emoji }}</span>{% endif %}
-                            </div>
-                            <div class="p-5">
-                                <h3 class="font-display font-bold text-dark truncate">{{ p.name }}</h3>
-                                <p class="text-primary font-display font-bold text-lg mt-1">Mulai Rp {{ "{:,.0f}".format(p.base_price).replace(",", ".") }}</p>
-                            </div>
-                        </a>
-                    </div>
+                    <article class="card card-elevated" role="listitem">
+                      {% if p.photo %}
+                      <div class="card-image" style="background-image: url('/uploads/{{ p.photo }}')" role="img" aria-label="{{ p.name }}"></div>
+                      {% else %}
+                      <div class="card-image" style="background-image: none; background: var(--color-primary-100, #FFE8D6);" role="img" aria-label="{{ p.name }}"><span class="text-6xl">{{ p.emoji }}</span></div>
+                      {% endif %}
+                      <div class="card-body">
+                        <header class="card-header">
+                          <h3 class="card-title">{{ p.name }}</h3>
+                        </header>
+                        <div class="card-content">
+                          <p class="text-primary font-display font-bold text-lg">Mulai Rp {{ "{:,.0f}".format(p.base_price).replace(",", ".") }}</p>
+                        </div>
+                        <footer class="card-footer">
+                          <a href="/product/{{ p.id }}" class="btn btn-primary btn-sm">Lihat Detail</a>
+                        </footer>
+                      </div>
+                    </article>
                     {% endfor %}
-                </div>
+                  </div>
             </div>
         </section>
         {% endif %}
@@ -193,32 +184,34 @@
         <section id="promo" class="py-16 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {% if promo %}
-                <div class="bg-gradient-to-r from-primary to-orange-500 rounded-3xl p-8 md:p-12 text-white shadow-xl shadow-primary/20">
+                <article class="card card-elevated" style="background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-accent-500) 100%); color: white;">
+                  <div class="card-body" style="background: transparent; border: none;">
                     <div class="grid md:grid-cols-2 gap-8 items-center">
                         <div>
-                            <span class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-semibold mb-4">Promo Spesial</span>
+                            <span class="badge badge-outline badge-md" style="--badge-bg: rgba(255,255,255,0.2); --badge-text: white; --badge-border: rgba(255,255,255,0.3);">Promo Spesial</span>
                             <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Temukan camilan favorit dengan harga spesial!</h2>
                             <p class="text-white/80 mb-6">Nikmati diskon eksklusif untuk produk-produk pilihan sepanjang bulan ini.</p>
-                            <a href="#menu" class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">Lihat Promo →</a>
+                            <a href="#menu" class="btn btn-secondary btn-lg" style="--btn-bg: white; --btn-text: var(--color-primary-500);">Lihat Promo →</a>
                         </div>
                         <div class="flex justify-center">
-                            <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
+                            <div class="card card-elevated" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: none; padding: var(--spacing-6); text-align: center;">
                                 <p class="text-5xl font-display font-bold mb-1">{{ promo.discount_value }}%</p>
                                 <p class="text-white/80 mb-2">OFF untuk pembelian di atas Rp {{ "{:,.0f}".format(promo.min_purchase).replace(",", ".") }}</p>
-                                <p class="text-white/60 text-sm">Gunakan kode: <span class="font-bold text-white bg-white/20 px-2 py-1 rounded">{{ promo.code }}</span></p>
+                                <p class="text-white/60 text-sm">Gunakan kode: <span class="font-bold badge badge-primary badge-sm">{{ promo.code }}</span></p>
                             </div>
                         </div>
                     </div>
-                </div>
+                  </div>
+                </article>
                 {% else %}
-                <div class="bg-gradient-to-r from-primary to-orange-500 rounded-3xl p-8 md:p-12 text-white shadow-xl shadow-primary/20">
-                    <div class="text-center">
-                        <span class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-semibold mb-4">Promo Spesial</span>
+                <article class="card card-elevated" style="background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-accent-500) 100%); color: white; text-align: center;">
+                  <div class="card-body" style="background: transparent; border: none;">
+                        <span class="badge badge-outline badge-md" style="--badge-bg: rgba(255,255,255,0.2); --badge-text: white; --badge-border: rgba(255,255,255,0.3);">Promo Spesial</span>
                         <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Temukan camilan favorit dengan harga spesial!</h2>
                         <p class="text-white/80 mb-6">Nikmati diskon eksklusif untuk produk-produk pilihan sepanjang bulan ini.</p>
-                        <a href="#menu" class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">Lihat Promo →</a>
-                    </div>
-                </div>
+                        <a href="#menu" class="btn btn-secondary btn-lg" style="--btn-bg: white; --btn-text: var(--color-primary-500);">Lihat Promo →</a>
+                  </div>
+                </article>
                 {% endif %}
             </div>
         </section>
@@ -229,38 +222,44 @@
                     <h2 class="font-display text-3xl md:text-4xl font-bold text-dark mb-2">Pilihan Snack Favorit</h2>
                     <p class="text-gray-500">Temukan camilan favoritmu dari koleksi kami.</p>
                 </div>
-                <div class="flex flex-wrap justify-center gap-3 mb-10">
-                    <a href="/" class="px-5 py-2 rounded-full font-semibold transition text-sm {% if not cat_id %}bg-primary text-white{% else %}bg-white text-dark border hover:bg-primary hover:text-white{% endif %}">Semua</a>
+                <div class="flex flex-wrap justify-center gap-3 mb-10" role="group" aria-label="Kategori produk">
+                    <a href="/" class="badge badge-primary badge-md" role="button" aria-pressed="{% if not cat_id %}true{% else %}false{% endif %}">Semua</a>
                     {% for cat in categories %}
-                    <a href="/?cat={{ cat.id }}" class="px-5 py-2 rounded-full font-semibold transition text-sm {% if cat_id|string == cat.id|string %}bg-primary text-white{% else %}bg-white text-dark border hover:bg-primary hover:text-white{% endif %}">{{ cat.emoji }} {{ cat.name }}</a>
+                    <a href="/?cat={{ cat.id }}" class="badge badge-outline badge-md" role="button" aria-pressed="{% if cat_id|string == cat.id|string %}true{% else %}false{% endif %}">{{ cat.emoji }} {{ cat.name }}</a>
                     {% endfor %}
                 </div>
                 {% set grid_cols = theme.product_cols in ('2','3','4') and theme.product_cols or '4' %}
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-{{ grid_cols }} gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-{{ grid_cols }} gap-6" role="list">
                     {% for p in products %}
-                    <div class="menu-card bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
-                        <a href="/product/{{ p.id }}">
-                            <div class="h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
-                                {% if p.photo %}<img src="/uploads/{{ p.photo }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">{% else %}<span class="text-5xl group-hover:scale-110 transition-transform">{{ p.emoji }}</span>{% endif %}
-                            </div>
-                            <div class="p-5">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="font-display font-bold text-dark">{{ p.name }}</h3>
-                                    {% if p.badge %}<span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full font-semibold">{{ p.badge }}</span>{% endif %}
-                                </div>
-                                <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ p.description }}</p>
-                                <div class="mt-3 flex justify-between items-center">
-                                    <span class="font-display font-bold text-lg text-primary">Mulai Rp {{ "{:,.0f}".format(p.base_price).replace(",", ".") }}</span>
-                                    <span class="text-primary text-sm font-semibold hover:underline">Detail →</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                    <article class="card card-elevated" role="listitem">
+                      {% if p.photo %}
+                      <div class="card-image" style="background-image: url('/uploads/{{ p.photo }}')" role="img" aria-label="{{ p.name }}"></div>
+                      {% else %}
+                      <div class="card-image" style="background: var(--color-primary-100, #FFE8D6);" role="img" aria-label="{{ p.name }}"><span class="text-5xl">{{ p.emoji }}</span></div>
+                      {% endif %}
+                      <div class="card-body">
+                        <header class="card-header">
+                          <div class="flex justify-between items-start">
+                            <h3 class="card-title">{{ p.name }}</h3>
+                            {% if p.badge %}<span class="badge badge-success badge-sm">{{ p.badge }}</span>{% endif %}
+                          </div>
+                        </header>
+                        <div class="card-content">
+                          <p class="text-sm mb-3 line-clamp-2">{{ p.description }}</p>
+                        </div>
+                        <footer class="card-footer">
+                          <div class="flex justify-between items-center w-full">
+                            <span class="font-display font-bold text-lg text-primary">Mulai Rp {{ "{:,.0f}".format(p.base_price).replace(",", ".") }}</span>
+                            <a href="/product/{{ p.id }}" class="btn btn-primary btn-sm">Detail</a>
+                          </div>
+                        </footer>
+                      </div>
+                    </article>
                     {% endfor %}
                     {% if not products %}
-                    <div class="col-span-full text-center py-16"><span class="text-6xl block mb-4">🔍</span><p class="text-gray-400 text-lg">Produk tidak ditemukan</p></div>
+                    <div class="col-span-full text-center py-16" role="status"><span class="text-6xl block mb-4">🔍</span><p class="text-gray-400 text-lg">Produk tidak ditemukan</p></div>
                     {% endif %}
-                </div>
+                  </div>
             </div>
         </section>
 
@@ -345,60 +344,55 @@
         </section>
     </main>
 
-    <footer class="bg-dark text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-lg">{{ theme.logo_text or 'D' }}</span>{% endif %}</div>
-                        <span class="font-display font-bold text-xl">{{ settings.get('shop_name', 'Denis Snack') }}</span>
-                    </div>
-                    <p class="text-gray-400 text-sm mb-4">Camilan enak dengan harga terjangkau, teman setiap momen bersama keluarga Indonesia.</p>
-                </div>
-                <div>
-                    <h4 class="font-display font-bold text-lg mb-4">Navigasi</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="/" class="text-gray-400 hover:text-white transition">Beranda</a></li>
-                        <li><a href="/#menu" class="text-gray-400 hover:text-white transition">Menu</a></li>
-                        <li><a href="/profile" class="text-gray-400 hover:text-white transition">Profil</a></li>
-                        <li><a href="/#kontak" class="text-gray-400 hover:text-white transition">Hubungi Kami</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-display font-bold text-lg mb-4">Kontak</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li class="text-gray-400">{{ settings.get('whatsapp', '-') }}</li>
-                        <li class="text-gray-400">{{ settings.get('address', '-') }}</li>
-                        <li class="text-gray-400">{{ settings.get('email', '-') }}</li>
-                    </ul>
-                </div>
+    <!-- Footer Component -->
+    <footer class="footer footer-multi-column" role="contentinfo">
+      <div class="footer-container">
+        <div class="footer-grid">
+          <div class="footer-brand-col">
+            {% if theme.logo_type == 'image' and theme.logo_image %}
+            <img src="/uploads/{{ theme.logo_image }}" alt="" class="footer-logo" aria-hidden="true">
+            {% else %}
+            <div class="footer-logo-text" style="width: 48px; height: 48px; background: var(--color-primary-500); border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; color: white; font-weight: var(--font-weight-bold); font-size: var(--font-size-xl);">{{ theme.logo_text or 'D' }}</div>
+            {% endif %}
+            <p class="footer-brand">{{ settings.get('shop_name', 'Denis Snack') }}</p>
+            <p class="footer-tagline">Camilan enak dengan harga terjangkau, teman setiap momen bersama keluarga Indonesia.</p>
+            <div class="footer-social" role="list">
+              <a href="https://wa.me/{{ settings.get('whatsapp', '6281234567890') }}" class="footer-social-link" aria-label="WhatsApp" role="listitem" target="_blank" rel="noopener">💬</a>
+              <a href="#" class="footer-social-link" aria-label="Instagram" role="listitem" target="_blank" rel="noopener">📷</a>
+              <a href="#" class="footer-social-link" aria-label="Facebook" role="listitem" target="_blank" rel="noopener">📘</a>
             </div>
-            <div class="border-t border-gray-700 pt-8 text-center">
-                <div class="flex justify-center gap-6 mb-4 flex-wrap">
-                    <div class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="text-green-400">✓</span>
-                        <span>Garansi Kualitas</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="text-green-400">📦</span>
-                        <span>Kirim Cepat</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="text-green-400">💰</span>
-                        <span>Harga Terjangkau</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="text-green-400">🛡️</span>
-                        <span>Pembayaran Aman</span>
-                    </div>
-                    <div class="flex items-center gap-2 text-sm text-gray-400">
-                        <span class="text-green-400">📱</span>
-                        <span>WA Order</span>
-                    </div>
-                </div>
-                <p class="text-gray-500 text-sm">&copy; 2026 {{ settings.get('shop_name', 'Denis Snack') }}. All rights reserved.</p>
-            </div>
+          </div>
+          <div class="footer-links">
+            <nav class="footer-col" aria-label="Navigasi">
+              <h3 class="footer-col-title">Navigasi</h3>
+              <ul class="footer-col-list" role="list">
+                <li><a href="/" class="footer-link">Beranda</a></li>
+                <li><a href="/#menu" class="footer-link">Menu</a></li>
+                <li><a href="/profile" class="footer-link">Profil</a></li>
+                <li><a href="/#kontak" class="footer-link">Hubungi Kami</a></li>
+              </ul>
+            </nav>
+            <nav class="footer-col" aria-label="Kontak">
+              <h3 class="footer-col-title">Kontak</h3>
+              <ul class="footer-col-list" role="list">
+                <li><a href="https://wa.me/{{ settings.get('whatsapp', '6281234567890') }}" class="footer-link">💬 {{ settings.get('whatsapp', '-') }}</a></li>
+                <li><a href="#" class="footer-link">📍 {{ settings.get('address', '-') }}</a></li>
+                <li><a href="mailto:{{ settings.get('email', '-') }}" class="footer-link">📧 {{ settings.get('email', '-') }}</a></li>
+              </ul>
+            </nav>
+          </div>
         </div>
+        <div class="footer-bottom-bar">
+          <div class="footer-trust-badges" role="list">
+            <div class="footer-trust-badge" role="listitem"><span class="text-green-400">✓</span><span>Garansi Kualitas</span></div>
+            <div class="footer-trust-badge" role="listitem"><span class="text-green-400">📦</span><span>Kirim Cepat</span></div>
+            <div class="footer-trust-badge" role="listitem"><span class="text-green-400">💰</span><span>Harga Terjangkau</span></div>
+            <div class="footer-trust-badge" role="listitem"><span class="text-green-400">🛡️</span><span>Pembayaran Aman</span></div>
+            <div class="footer-trust-badge" role="listitem"><span class="text-green-400">📱</span><span>WA Order</span></div>
+          </div>
+          <p class="footer-bottom">&copy; 2026 {{ settings.get('shop_name', 'Denis Snack') }}. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
 
     <!-- Checkout Modal -->
