@@ -7,12 +7,23 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32))
-app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max upload
 DATA_DIR = os.environ.get('DATA_DIR', os.path.join(os.path.dirname(__file__), 'data'))
 os.makedirs(DATA_DIR, exist_ok=True)
+_secret_path = os.path.join(DATA_DIR, '.secret_key')
+import secrets as _secrets
+if os.path.exists(_secret_path):
+    with open(_secret_path) as _f:
+        app.secret_key = _f.read().strip()
+else:
+    app.secret_key = _secrets.token_hex(32)
+    with open(_secret_path, 'w') as _f:
+        _f.write(app.secret_key)
+os.environ['FLASK_SECRET_KEY'] = app.secret_key
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = os.environ.get('SESSION_COOKIE_SECURE', '1') == '1'
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024
 DB_PATH = os.environ.get('DB_PATH', os.path.join(DATA_DIR, 'denis_snack.db'))
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
