@@ -4,6 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ settings.get('shop_name', 'Denis Snack') }} - Camilan Enak & Lezat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ settings.get('shop_name', 'Denis Snack') }} - Toko camilan online Indonesia. Keripik, Kue Kering, Permen, Snack berkualitas dengan harga terjangkau. Kirim ke seluruh Indonesia via WA.">
+    <meta name="keywords" content="camilan, keripik, kue kering, permen, snack, makanan ringan, belanja online, keripik singkong, kue kering coklat">
+    <meta name="author" content="{{ settings.get('shop_name', 'Denis Snack') }}">
+    <meta property="og:title" content="{{ settings.get('shop_name', 'Denis Snack') }} - Camilan Enak & Lezat">
+    <meta property="og:description" content="Toko camilan online Indonesia. Keripik, Kue Kering, Permen, Snack berkualitas. Kirim ke seluruh Indonesia via WhatsApp.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.host_url }}">
+    <meta property="og:image" content="{{ request.host_url }}uploads/{{ theme.logo_image }}">
+    <meta property="og:site_name" content="{{ settings.get('shop_name', 'Denis Snack') }}">
+    <meta property="og:locale" content="id_ID">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ settings.get('shop_name', 'Denis Snack') }}">
+    <meta name="twitter:description" content="Toko camilan online Indonesia. Keripik, Kue Kering, Permen, Snack berkualitas.">
+    <meta name="twitter:image" content="{{ request.host_url }}uploads/{{ theme.logo_image }}">
+    <link rel="canonical" href="{{ request.host_url }}">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "{{ settings.get('shop_name', 'Denis Snack') }}",
+        "url": "{{ request.host_url }}",
+        "description": "Toko camilan online Indonesia - Keripik, Kue Kering, Permen, Snack",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "{{ request.host_url }}?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <!-- Facebook Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push();n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src='https://connect.facebook.net/en_US/fbevents.js';
+    s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+    }(window, document,'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'XXXXXXXXXXXXXXXX');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=XXXXXXXXXXXXXXXX&ev=PageView&noscript=1"></noscript>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
     {% include 'partials/theme_head.html' %}
@@ -321,6 +374,28 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 pt-8 text-center">
+                <div class="flex justify-center gap-6 mb-4 flex-wrap">
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="text-green-400">✓</span>
+                        <span>Garansi Kualitas</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="text-green-400">📦</span>
+                        <span>Kirim Cepat</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="text-green-400">💰</span>
+                        <span>Harga Terjangkau</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="text-green-400">🛡️</span>
+                        <span>Pembayaran Aman</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                        <span class="text-green-400">📱</span>
+                        <span>WA Order</span>
+                    </div>
+                </div>
                 <p class="text-gray-500 text-sm">&copy; 2026 {{ settings.get('shop_name', 'Denis Snack') }}. All rights reserved.</p>
             </div>
         </div>
@@ -368,6 +443,40 @@
                             <div class="flex justify-between text-sm"><span>Ongkir:</span><span id="checkout-shipping"></span></div>
                             <div class="flex justify-between text-sm text-green-600 hidden" id="discount-row"><span>Diskon:</span><span id="checkout-discount"></span></div>
                             <div class="flex justify-between font-bold text-lg border-t pt-1"><span>Total:</span><span id="checkout-total" class="text-primary"></span></div>
+                        </div>
+                        <!-- Free Shipping Progress Bar -->
+                        <div id="free-shipping-bar" class="mt-3 hidden">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-green-600 font-semibold">🎯 Free Ongkir!</span>
+                                <span class="text-green-600 font-semibold" id="free-shipping-remaining"></span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div id="free-shipping-progress" class="bg-green-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">Tambah lagi Rp <span id="free-shipping-amount"></span> untuk gratis ongkir!</p>
+                        </div>
+                        <!-- Trust Badges -->
+                        <div class="flex justify-center gap-4 mt-4 flex-wrap">
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <span class="text-green-500 text-lg">✓</span>
+                                <span>Garansi Kualitas</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <span class="text-green-500 text-lg">📦</span>
+                                <span>Kirim Cepat</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <span class="text-green-500 text-lg">💰</span>
+                                <span>Harga Terjangkau</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <span class="text-green-500 text-lg">🛡️</span>
+                                <span>Pembayaran Aman</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-xs text-gray-500">
+                                <span class="text-green-500 text-lg">📱</span>
+                                <span>WA Order</span>
+                            </div>
                         </div>
                     </div>
                     <p id="order-error" class="hidden text-sm font-semibold bg-red-50 text-red-600 border border-red-200 rounded-xl px-4 py-2"></p>
@@ -461,7 +570,29 @@
         document.getElementById('checkout-shipping').textContent = 'Rp ' + currentShipping.toLocaleString('id');
         const dr = document.getElementById('discount-row');
         if (currentDiscount > 0) { dr.classList.remove('hidden'); document.getElementById('checkout-discount').textContent = '-Rp ' + currentDiscount.toLocaleString('id'); } else { dr.classList.add('hidden'); }
-        document.getElementById('checkout-total').textContent = 'Rp ' + (subtotal + currentShipping - currentDiscount).toLocaleString('id');
+        const total = subtotal + currentShipping - currentDiscount;
+        document.getElementById('checkout-total').textContent = 'Rp ' + total.toLocaleString('id');
+        updateFreeShippingBar(subtotal);
+    }
+
+    const FREE_SHIPPING_THRESHOLD = 150000;
+    function updateFreeShippingBar(subtotal) {
+        const bar = document.getElementById('free-shipping-bar');
+        const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+        if (subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD) {
+            bar.classList.remove('hidden');
+            const pct = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
+            document.getElementById('free-shipping-progress').style.width = pct + '%';
+            document.getElementById('free-shipping-remaining').textContent = 'Rp ' + remaining.toLocaleString('id') + ' lagi!';
+            document.getElementById('free-shipping-amount').textContent = remaining.toLocaleString('id');
+        } else if (subtotal >= FREE_SHIPPING_THRESHOLD) {
+            bar.classList.remove('hidden');
+            document.getElementById('free-shipping-progress').style.width = '100%';
+            document.getElementById('free-shipping-remaining').textContent = '🎉 GRATIS Ongkir!';
+            document.getElementById('free-shipping-amount').textContent = '0';
+        } else {
+            bar.classList.add('hidden');
+        }
     }
 
     function openCheckout() {
@@ -520,6 +651,21 @@
     document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('hidden'));
     document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); const t = document.querySelector(a.getAttribute('href')); if (t) t.scrollIntoView({behavior:'smooth'}); }));
     renderCart();
-    </script>
+    <script>
+    // WhatsApp sticky button tracking
+    document.addEventListener('DOMContentLoaded', function() {
+        const waBtn = document.getElementById('wa-fab');
+        if (waBtn) {
+            waBtn.addEventListener('click', function() {
+                fbq('track', 'Purchase', {value: 0, currency: 'IDR'});
+                gtag('event', 'conversion', {'send_to': 'G-XXXXXXXXXX'});
+            });
+        }
+    });
+</script>
+<!-- WhatsApp Floating Button -->
+<a id="wa-fab" href="https://wa.me/{{ settings.get('whatsapp', '6281234567890') }}?text=Halo%20{{ settings.get('shop_name', 'Denis Snack') }}%2C%20saya%20mau%20pesan!" target="_blank" class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-3xl z-40 transition-all hover:scale-110 active:scale-95" title="Order via WhatsApp">
+    💬
+</a>
 </body>
 </html>

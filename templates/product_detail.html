@@ -4,6 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.name }} - {{ settings.get('shop_name', 'Denis Snack') }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ product.name }} - {{ product.description[:100] }}. Beli {{ product.name }} di {{ settings.get('shop_name', 'Denis Snack') }}. Tersedia berbagai varian berat. Kirim ke seluruh Indonesia via WhatsApp.">
+    <meta name="keywords" content="{{ product.name }}, camilan, {{ product.cat_name|lower }}, beli online, {{ settings.get('shop_name', 'Denis Snack') }}">
+    <meta property="og:title" content="{{ product.name }} - {{ settings.get('shop_name', 'Denis Snack') }}">
+    <meta property="og:description" content="{{ product.description[:150] }}">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="{{ request.host_url }}product/{{ product.id }}">
+    <meta property="og:image" content="{% if product.photo %}{{ request.host_url }}uploads/{{ product.photo }}{% else %}{{ request.host_url }}uploads/{{ theme.logo_image }}{% endif %}">
+    <meta property="product:price:amount" content="{{ variants[0].price if variants else 0 }}">
+    <meta property="product:price:currency" content="IDR">
+    <meta property="product:availability" content="{% if variants[0].stock > 0 %}in stock{% else %}out of stock{% endif %}">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "{{ product.name }}",
+        "description": "{{ product.description[:150] }}",
+        "image": "{% if product.photo %}{{ request.host_url }}uploads/{{ product.photo }}{% else %}{{ request.host_url }}uploads/{{ theme.logo_image }}{% endif %}",
+        "brand": {"@type": "Brand", "name": "{{ settings.get('shop_name', 'Denis Snack') }}"},
+        "offers": {
+            "@type": "Offer",
+            "url": "{{ request.host_url }}product/{{ product.id }}",
+            "priceCurrency": "IDR",
+            "price": "{{ variants[0].price if variants else 0 }}",
+            "availability": "{% if variants[0].stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+            "seller": {"@type": "Organization", "name": "{{ settings.get('shop_name', 'Denis Snack') }}"}
+        }
+    }
+    </script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <!-- Facebook Pixel -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push();n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src='https://connect.facebook.net/en_US/fbevents.js';
+    s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s);
+    }(window, document,'script', 'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'XXXXXXXXXXXXXXXX');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=XXXXXXXXXXXXXXXX&ev=PageView&noscript=1"></noscript>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
     {% include 'partials/theme_head.html' %}
