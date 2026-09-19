@@ -10,12 +10,11 @@ app = Flask(__name__)
 DATA_DIR = os.environ.get('DATA_DIR', os.path.join(os.path.dirname(__file__), 'data'))
 os.makedirs(DATA_DIR, exist_ok=True)
 _secret_path = os.path.join(DATA_DIR, '.secret_key')
-import secrets as _secrets
 if os.path.exists(_secret_path):
     with open(_secret_path) as _f:
         app.secret_key = _f.read().strip()
 else:
-    app.secret_key = _secrets.token_hex(32)
+    app.secret_key = secrets.token_hex(32)
     with open(_secret_path, 'w') as _f:
         _f.write(app.secret_key)
 os.environ['FLASK_SECRET_KEY'] = app.secret_key
