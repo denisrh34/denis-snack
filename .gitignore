@@ -1,8 +1,10 @@
 __pycache__/
 *.pyc
 *.pyo
-*.db
 *.sqlite
 instance/
 static/uploads/
 !.gitkeep
+*.db-wal
+*.db-shm
+.railway/

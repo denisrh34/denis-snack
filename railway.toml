@@ -2,16 +2,11 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 30"
+startCommand = "gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 30"
 healthcheckPath = "/"
 healthcheckTimeout = 100
 
-[mounts]
-source = "denis-snack-data"
-target = "/app/uploads"
-mountPoint = "STORAGE"
-
 [env]
 FLASK_SECRET_KEY = "${{SECRET_KEY}}"
+DATA_DIR = "/app/data"
 DB_PATH = "/app/data/denis_snack.db"
-RAILWAY_VOLUME_MOUNT_PATH = "/app/data"
