@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ settings.get('shop_name', 'Denis Snack') }} - Camilan Enak & Lezat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    {% include 'partials/theme_head.html' %}
+</head>
+<body class="bg-light font-body {{ theme.body_class }}">
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-lg">{{ theme.logo_text or 'D' }}</span>{% endif %}</div>
+                    <span class="font-display font-bold text-xl text-dark">{{ settings.get('shop_name', 'Denis Snack') }}</span>
+                </a>
+                <div class="hidden md:flex items-center gap-5">
+                    <a href="/" class="text-dark hover:text-primary transition font-medium">Beranda</a>
+                    <a href="/#menu" class="text-dark hover:text-primary transition font-medium">Menu</a>
+                    <form action="/" method="GET" class="relative">
+                        <input type="text" name="q" placeholder="Cari produk..." value="{{ search }}" class="pl-4 pr-10 py-2 rounded-full border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm w-48">
+                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</button>
+                    </form>
+                    <a href="/#keranjang" class="bg-primary text-white px-5 py-2 rounded-full hover:bg-orange-600 transition font-semibold flex items-center gap-2">
+                        🛒 <span id="cart-count" class="bg-white text-primary rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold hidden">0</span>
+                    </a>
+                    {% if session.get('customer_id') %}
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 text-dark hover:text-primary transition font-semibold">👤 {{ session.get('customer_name') }}</button>
+                        <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border py-2 hidden group-hover:block z-50">
+                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📋 Profil Saya</a>
+                            <a href="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">📦 Pesanan Saya</a>
+                            <a href="/logout" class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100">🚪 Logout</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <a href="/login" class="text-dark hover:text-primary transition font-medium">Masuk</a>
+                    <a href="/register" class="bg-secondary text-white px-5 py-2 rounded-full hover:bg-blue-700 transition font-semibold">Daftar</a>
+                    {% endif %}
+                </div>
+                <button id="menuBtn" class="md:hidden text-dark text-2xl">☰</button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t px-4 py-4 space-y-3">
+            <a href="/" class="block text-dark hover:text-primary font-medium">Beranda</a>
+            <a href="/#menu" class="block text-dark hover:text-primary font-medium">Menu</a>
+            <form action="/" method="GET" class="relative">
+                <input type="text" name="q" placeholder="Cari produk..." value="{{ search }}" class="w-full pl-4 pr-10 py-2 rounded-full border text-sm">
+                <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</button>
+            </form>
+            {% if session.get('customer_id') %}
+            <a href="/profile" class="block text-dark hover:text-primary font-medium">👤 Profil</a>
+            <a href="/logout" class="block text-red-500 font-medium">🚪 Logout</a>
+            {% else %}
+            <a href="/login" class="block text-dark hover:text-primary font-medium">Masuk</a>
+            <a href="/register" class="block bg-secondary text-white px-5 py-2 rounded-full text-center font-semibold">Daftar</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main>
+        {% set hero_style = theme.hero_style if theme.hero_style in ('default', 'image') else 'default' %}
+        {% set hero_txt = 'text-white' if hero_style == 'image' else 'text-dark' %}
+        {% set hero_sub = 'text-white/90' if hero_style == 'image' else 'text-gray-600' %}
+        {% if hero_style == 'image' and theme.hero_image %}
+        <section id="beranda" class="relative py-16 md:py-20 overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('/uploads/{{ theme.hero_image }}')"></div>
+            <div class="absolute inset-0 bg-dark/50"></div>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% else %}
+        <section id="beranda" class="bg-gradient-to-br from-primary/10 via-accent/5 to-light py-16 md:py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% endif %}
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    <div>
+                        <span class="inline-block bg-primary/10 text-primary px-4 py-1 rounded-full text-sm font-semibold mb-4">Camilan Favorit Semua Orang</span>
+                        <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold {{ hero_txt }} leading-tight mb-6">Camilan Renyah, <span class="text-primary">Teman Setiap Momen</span></h1>
+                        <p class="{{ hero_sub }} text-lg mb-8 max-w-lg">Keripik, kue kering, dan aneka snack pilihan yang siap menemani waktu santai kamu.</p>
+                        <a href="#menu" class="inline-block bg-primary text-white px-8 py-3 rounded-full hover:bg-orange-600 transition font-semibold text-lg shadow-lg shadow-primary/30">Lihat Menu</a>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="relative w-72 h-72 md:w-96 md:h-96">
+                            <div class="absolute inset-0 bg-primary/20 rounded-full blur-3xl"></div>
+                            <div class="absolute inset-8 bg-accent/20 rounded-full blur-2xl"></div>
+                            <div class="absolute inset-16 bg-white rounded-full shadow-xl flex items-center justify-center">
+                                <span class="text-7xl md:text-8xl">🍿</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kategori" class="py-12 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-8">
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-dark mb-2">Mau Ngemil Apa Hari Ini?</h2>
+                    <p class="text-gray-500">Pilih kategori favoritmu dan temukan camilan lezatmu.</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 mb-10">
+                    <a href="/" class="px-6 py-3 rounded-full font-semibold transition text-sm bg-primary text-white shadow-md shadow-primary/20">Semua</a>
+                    {% for cat in categories %}
+                    <a href="/?cat={{ cat.id }}" class="px-6 py-3 rounded-full font-semibold transition text-sm bg-white text-gray-700 border border-gray-200 hover:border-primary hover:text-primary hover:bg-primary/5">{{ cat.emoji }} {{ cat.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        {% if featured and theme.show_featured == '1' %}
+        <section id="produk-unggulan" class="py-16 bg-light">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="font-display text-3xl md:text-4xl font-bold text-dark mb-2">⭐ Produk Unggulan</h2>
+                        <p class="text-gray-500">Camilan favorit yang paling banyak dicari.</p>
+                    </div>
+                    <a href="#menu" class="hidden md:inline-block text-primary font-semibold hover:underline">Lihat Semua →</a>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {% for p in featured %}
+                    <div class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
+                        <a href="/product/{{ p.id }}">
+                            <div class="h-44 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
+                                {% if p.photo %}<img src="/uploads/{{ p.photo }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">{% else %}<span class="text-6xl group-hover:scale-110 transition-transform">{{ p.emoji }}</span>{% endif %}
+                            </div>
+                            <div class="p-5">
+                                <h3 class="font-display font-bold text-dark truncate">{{ p.name }}</h3>
+                                <p class="text-primary font-display font-bold text-lg mt-1">Mulai Rp {{ "{:,.0f}".format(p.base_price).replace(",", ".") }}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <section id="promo" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {% if promo %}
+                <div class="bg-gradient-to-r from-primary to-orange-500 rounded-3xl p-8 md:p-12 text-white shadow-xl shadow-primary/20">
+                    <div class="grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <span class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-semibold mb-4">Promo Spesial</span>
+                            <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Temukan camilan favorit dengan harga spesial!</h2>
+                            <p class="text-white/80 mb-6">Nikmati diskon eksklusif untuk produk-produk pilihan sepanjang bulan ini.</p>
+                            <a href="#menu" class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">Lihat Promo →</a>
+                        </div>
+                        <div class="flex justify-center">
+                            <div class="bg-white/10 backdrop-blur rounded-2xl p-6 text-center">
+                                <p class="text-5xl font-display font-bold mb-1">{{ promo.discount_value }}%</p>
+                                <p class="text-white/80 mb-2">OFF untuk pembelian di atas Rp {{ "{:,.0f}".format(promo.min_purchase).replace(",", ".") }}</p>
+                                <p class="text-white/60 text-sm">Gunakan kode: <span class="font-bold text-white bg-white/20 px-2 py-1 rounded">{{ promo.code }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="bg-gradient-to-r from-primary to-orange-500 rounded-3xl p-8 md:p-12 text-white shadow-xl shadow-primary/20">
+                    <div class="text-center">
+                        <span class="inline-block bg-white/20 px-4 py-1 rounded-full text-sm font-semibold mb-4">Promo Spesial</span>
+                        <h2 class="font-display text-3xl md:text-4xl font-bold mb-4">Temukan camilan favorit dengan harga spesial!</h2>
+                        <p class="text-white/80 mb-6">Nikmati diskon eksklusif untuk produk-produk pilihan sepanjang bulan ini.</p>
+                        <a href="#menu" class="inline-block bg-white text-primary font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">Lihat Promo →</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section id="menu" class="py-16 bg-light">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="font-display text-3xl md:text-4xl font-bold text-dark mb-2">Pilihan Snack Favorit</h2>
+                    <p class="text-gray-500">Temukan camilan favoritmu dari koleksi kami.</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 mb-10">
+                    <a href="/" class="px-5 py-2 rounded-full font-semibold transition text-sm {% if not cat_id %}bg-primary text-white{% else %}bg-white text-dark border hover:bg-primary hover:text-white{% endif %}">Semua</a>
+                    {% for cat in categories %}
+                    <a href="/?cat={{ cat.id }}" class="px-5 py-2 rounded-full font-semibold transition text-sm {% if cat_id|string == cat.id|string %}bg-primary text-white{% else %}bg-white text-dark border hover:bg-primary hover:text-white{% endif %}">{{ cat.emoji }} {{ cat.name }}</a>
+                    {% endfor %}
+                </div>
+                {% set grid_cols = theme.product_cols in ('2','3','4') and theme.product_cols or '4' %}
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-{{ grid_cols }} gap-6">
+                    {% for p in products %}
+                    <div class="menu-card bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group cursor-pointer">
+                        <a href="/product/{{ p.id }}">
+                            <div class="h-48 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
+                                {% if p.photo %}<img src="/uploads/{{ p.photo }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">{% else %}<span class="text-5xl group-hover:scale-110 transition-transform">{{ p.emoji }}</span>{% endif %}
+                            </div>
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-display font-bold text-dark">{{ p.name }}</h3>
+                                    {% if p.badge %}<span class="bg-green-100 text-green-600 text-xs px-2 py-1 rounded-full font-semibold">{{ p.badge }}</span>{% endif %}
+                                </div>
+                                <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ p.description }}</p>
+                                <div class="mt-3 flex justify-between items-center">
+                                    <span class="font-display font-bold text-lg text-primary">Mulai Rp {{ "{:,.0f}".format(p.base_price).replace(",", ".") }}</span>
+                                    <span class="text-primary text-sm font-semibold hover:underline">Detail →</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                    {% if not products %}
+                    <div class="col-span-full text-center py-16"><span class="text-6xl block mb-4">🔍</span><p class="text-gray-400 text-lg">Produk tidak ditemukan</p></div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section id="tentang" class="py-16 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="bg-gradient-to-br from-primary/20 to-accent/20 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 to-accent/10"></div>
+                        <div class="relative">
+                            <div class="flex justify-center gap-4 mb-8">
+                                <div class="w-24 h-24 bg-white/80 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg"><span class="text-3xl">☪️</span></div>
+                                <div class="w-24 h-24 bg-white/80 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg"><span class="text-3xl">💪</span></div>
+                                <div class="w-24 h-24 bg-white/80 backdrop-blur rounded-2xl flex items-center justify-center shadow-lg"><span class="text-3xl">🚚</span></div>
+                            </div>
+                            <h3 class="font-display font-bold text-2xl text-dark mb-2">Sejak 2015</h3>
+                            <p class="text-gray-600">Melayani dengan cinta & rasa</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="font-display text-3xl md:text-4xl font-bold text-dark mb-6">Teman Ngemil Favorit Keluarga Indonesia</h2>
+                        <p class="text-gray-600 leading-relaxed mb-6">Berdiri sejak 2015, Denis Snack menyajikan camilan enak dengan harga terjangkau untuk semua kalangan. Setiap bite adalah perjalanan rasa yang menggugah selera.</p>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-light rounded-xl p-5 text-center">
+                                <p class="font-display font-bold text-2xl text-primary">100%</p>
+                                <p class="text-gray-500 text-xs">Halal</p>
+                            </div>
+                            <div class="bg-light rounded-xl p-5 text-center">
+                                <p class="font-display font-bold text-2xl text-primary">Fresh</p>
+                                <p class="text-gray-500 text-xs">Setiap Hari</p>
+                            </div>
+                            <div class="bg-light rounded-xl p-5 text-center">
+                                <p class="font-display font-bold text-2xl text-primary">Kirim</p>
+                                <p class="text-gray-500 text-xs">Se-Indonesia</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="kontak" class="py-16 bg-light">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12 items-start">
+                    <div>
+                        <h2 class="font-display text-3xl font-bold text-dark mb-8">Hubungi Kami</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white text-lg">💬</div>
+                                <div>
+                                    <p class="font-semibold text-dark">WhatsApp</p>
+                                    <p class="text-gray-500 text-sm">{{ settings.get('whatsapp', '-') }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white text-lg">📍</div>
+                                <div>
+                                    <p class="font-semibold text-dark">Alamat</p>
+                                    <p class="text-gray-500 text-sm">{{ settings.get('address', '-') }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-lg">📧</div>
+                                <div>
+                                    <p class="font-semibold text-dark">Email</p>
+                                    <p class="text-gray-500 text-sm">{{ settings.get('email', '-') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="keranjang" class="bg-white rounded-2xl shadow-md p-6">
+                        <h3 class="font-display font-bold text-xl text-dark mb-4">🛒 Keranjang Belanja</h3>
+                        <div id="cart-items" class="space-y-3 mb-4 max-h-64 overflow-y-auto">
+                            <p class="text-gray-400 text-sm" id="empty-cart">Keranjang masih kosong</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between font-bold text-lg mb-4"><span>Total:</span><span id="cart-total" class="text-primary">Rp 0</span></div>
+                            <button onclick="openCheckout()" id="checkout-btn" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-orange-600 transition font-semibold text-lg shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Pesan Sekarang</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-lg">{{ theme.logo_text or 'D' }}</span>{% endif %}</div>
+                        <span class="font-display font-bold text-xl">{{ settings.get('shop_name', 'Denis Snack') }}</span>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Camilan enak dengan harga terjangkau, teman setiap momen bersama keluarga Indonesia.</p>
+                </div>
+                <div>
+                    <h4 class="font-display font-bold text-lg mb-4">Navigasi</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="/" class="text-gray-400 hover:text-white transition">Beranda</a></li>
+                        <li><a href="/#menu" class="text-gray-400 hover:text-white transition">Menu</a></li>
+                        <li><a href="/profile" class="text-gray-400 hover:text-white transition">Profil</a></li>
+                        <li><a href="/#kontak" class="text-gray-400 hover:text-white transition">Hubungi Kami</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-display font-bold text-lg mb-4">Kontak</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="text-gray-400">{{ settings.get('whatsapp', '-') }}</li>
+                        <li class="text-gray-400">{{ settings.get('address', '-') }}</li>
+                        <li class="text-gray-400">{{ settings.get('email', '-') }}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 text-center">
+                <p class="text-gray-500 text-sm">&copy; 2026 {{ settings.get('shop_name', 'Denis Snack') }}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6"><h3 class="font-display font-bold text-xl text-dark">Checkout</h3><button onclick="closeCheckout()" class="text-gray-400 hover:text-dark text-2xl">&times;</button></div>
+            <form id="checkoutForm" onsubmit="submitOrder(event)">
+                <div class="space-y-4">
+                    <div><label class="block text-sm font-medium text-dark mb-1">Nama Lengkap *</label><input type="text" name="name" required value="{{ session.get('customer_name', '') }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"></div>
+                    <div><label class="block text-sm font-medium text-dark mb-1">No. WhatsApp *</label><input type="tel" name="phone" required placeholder="08xxx" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"></div>
+                    <div><label class="block text-sm font-medium text-dark mb-1">Alamat Lengkap *</label><textarea name="address" rows="2" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"></textarea></div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-sm font-medium text-dark mb-1">Kecamatan</label><input type="text" name="district" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"></div>
+                        <div><label class="block text-sm font-medium text-dark mb-1">Kota/Kabupaten *</label><input type="text" name="city" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-sm font-medium text-dark mb-1">Provinsi *</label><input type="text" name="province" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"></div>
+                        <div><label class="block text-sm font-medium text-dark mb-1">Kode Pos</label><input type="text" name="postal_code" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"></div>
+                    </div>
+                    <div><label class="block text-sm font-medium text-dark mb-1">Metode Pembayaran *</label>
+                        <select name="payment_method" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                            <option value="transfer">Transfer Bank</option>
+                            <option value="qris">QRIS</option>
+                            <option value="cod">COD (Bayar di Tempat)</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-sm font-medium text-dark mb-1">Kurir Pengiriman *</label>
+                        <select name="courier" required id="courier-select" onchange="updateShipping()" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                            <option value="">Pilih Kurir</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-sm font-medium text-dark mb-1">Kode Promo</label>
+                        <div class="flex gap-2"><input type="text" id="promo-code" placeholder="Masukkan kode" class="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none uppercase"><button type="button" onclick="applyPromo()" class="bg-secondary text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition font-semibold">Terapkan</button></div>
+                        <p id="promo-message" class="text-sm mt-1 hidden"></p>
+                    </div>
+                    <div><label class="block text-sm font-medium text-dark mb-1">Catatan</label><textarea name="notes" rows="2" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none" placeholder="Level pedas, dll"></textarea></div>
+                    <div class="bg-light rounded-xl p-4">
+                        <p class="font-semibold text-dark mb-2">Ringkasan Pesanan:</p>
+                        <div id="checkout-summary"></div>
+                        <div class="border-t mt-2 pt-2 space-y-1">
+                            <div class="flex justify-between text-sm"><span>Subtotal:</span><span id="checkout-subtotal"></span></div>
+                            <div class="flex justify-between text-sm"><span>Ongkir:</span><span id="checkout-shipping"></span></div>
+                            <div class="flex justify-between text-sm text-green-600 hidden" id="discount-row"><span>Diskon:</span><span id="checkout-discount"></span></div>
+                            <div class="flex justify-between font-bold text-lg border-t pt-1"><span>Total:</span><span id="checkout-total" class="text-primary"></span></div>
+                        </div>
+                    </div>
+                    <p id="order-error" class="hidden text-sm font-semibold bg-red-50 text-red-600 border border-red-200 rounded-xl px-4 py-2"></p>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-orange-600 transition font-semibold text-lg shadow-lg shadow-primary/30">✅ Konfirmasi Pesanan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 text-center">
+            <span class="text-6xl block mb-4">🎉</span>
+            <h3 class="font-display font-bold text-xl text-dark mb-2">Pesanan Berhasil!</h3>
+            <p class="text-gray-500 mb-2">Nomor invoice:</p>
+            <p id="order-invoice" class="font-display font-bold text-lg text-primary mb-4"></p>
+            <p class="text-gray-400 text-sm mb-6">Simpan nomor invoice untuk melacak pesanan Anda.</p>
+            <button onclick="closeSuccess()" class="bg-primary text-white px-8 py-3 rounded-full hover:bg-orange-600 transition font-semibold">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+    let cart = JSON.parse(localStorage.getItem('denis_cart') || '[]');
+    let currentShipping = 0;
+    let currentDiscount = 0;
+    let appliedPromo = '';
+
+    function saveCart() { localStorage.setItem('denis_cart', JSON.stringify(cart)); renderCart(); }
+
+    function addToCart(id, variantId, name, price, emoji, weightLabel, stock) {
+        const key = `${id}-${variantId}`;
+        const existing = cart.find(i => i.key === key);
+        if (existing) {
+            if (existing.qty < stock) { existing.qty++; } else { alert('Stok tidak cukup!'); return; }
+        } else {
+            cart.push({ key, product_id: id, variant_id: variantId, name, price, emoji, weight_label: weightLabel, qty: 1, stock });
+        }
+        saveCart();
+    }
+
+    function removeFromCart(key) { cart = cart.filter(i => i.key !== key); saveCart(); }
+
+    function updateQty(key, delta) {
+        const item = cart.find(i => i.key === key);
+        if (item) { item.qty += delta; if (item.qty <= 0) cart = cart.filter(i => i.key !== key); else if (item.qty > item.stock) { item.qty = item.stock; alert('Stok tidak cukup!'); } }
+        saveCart();
+    }
+
+    function renderCart() {
+        const el = document.getElementById('cart-items');
+        const count = document.getElementById('cart-count');
+        const total = document.getElementById('cart-total');
+        const btn = document.getElementById('checkout-btn');
+        if (!cart.length) { el.innerHTML = '<p class="text-gray-400 text-sm" id="empty-cart">Keranjang masih kosong</p>'; count.classList.add('hidden'); total.textContent = 'Rp 0'; btn.disabled = true; return; }
+        const tq = cart.reduce((s,i)=>s+i.qty,0);
+        count.textContent = tq; count.classList.remove('hidden');
+        let h = '', t = 0;
+        cart.forEach(i => { const sub = i.price*i.qty; t += sub; h += `<div class="flex items-center justify-between bg-light rounded-xl p-3"><div class="flex items-center gap-3"><span class="text-xl">${i.emoji}</span><div><p class="font-semibold text-dark text-sm">${i.name}</p><p class="text-xs text-gray-400">${i.weight_label} · Rp ${i.price.toLocaleString('id')}</p></div></div><div class="flex items-center gap-2"><button onclick="updateQty('${i.key}',-1)" class="w-7 h-7 bg-gray-200 rounded-full text-sm font-bold">-</button><span class="font-semibold text-sm w-5 text-center">${i.qty}</span><button onclick="updateQty('${i.key}',1)" class="w-7 h-7 bg-primary text-white rounded-full text-sm font-bold">+</button><button onclick="removeFromCart('${i.key}')" class="text-red-400 hover:text-red-600 ml-1">🗑</button></div></div>`; });
+        el.innerHTML = h; total.textContent = 'Rp ' + t.toLocaleString('id'); btn.disabled = false;
+    }
+
+    async function updateShipping() {
+        const sel = document.getElementById('courier-select');
+        const totalWeight = cart.reduce((s,i) => s + (i.weight_label.includes('kg') ? 1000 : parseInt(i.weight_label)) * i.qty, 0);
+        try {
+            const r = await fetch('/api/shipping/cost', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({weight_gram:totalWeight}) });
+            const d = await r.json();
+            sel.innerHTML = '<option value="">Pilih Kurir</option>';
+            d.couriers.forEach(c => { sel.innerHTML += `<option value="${c.name}" data-cost="${c.cost}">${c.name} - Rp ${c.cost.toLocaleString('id')} (${c.etd})</option>`; });
+            sel.onchange = function() { const opt = sel.options[sel.selectedIndex]; currentShipping = parseInt(opt.dataset.cost||0); };
+        } catch(e) {}
+    }
+
+    async function applyPromo() {
+        const code = document.getElementById('promo-code').value;
+        const msg = document.getElementById('promo-message');
+        const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+        if (!code) return;
+        try {
+            const r = await fetch('/api/promo/validate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({code,total:subtotal}) });
+            const d = await r.json();
+            msg.classList.remove('hidden');
+            if (d.valid) { msg.textContent = '✅ ' + d.message; msg.className = 'text-sm mt-1 text-green-600'; currentDiscount = d.discount; appliedPromo = code; }
+            else { msg.textContent = '❌ ' + d.message; msg.className = 'text-sm mt-1 text-red-500'; currentDiscount = 0; appliedPromo = ''; }
+            updateCheckoutTotal();
+        } catch(e) { msg.textContent = '❌ Error'; msg.className = 'text-sm mt-1 text-red-500'; }
+    }
+
+    function updateCheckoutTotal() {
+        const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+        document.getElementById('checkout-subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id');
+        document.getElementById('checkout-shipping').textContent = 'Rp ' + currentShipping.toLocaleString('id');
+        const dr = document.getElementById('discount-row');
+        if (currentDiscount > 0) { dr.classList.remove('hidden'); document.getElementById('checkout-discount').textContent = '-Rp ' + currentDiscount.toLocaleString('id'); } else { dr.classList.add('hidden'); }
+        document.getElementById('checkout-total').textContent = 'Rp ' + (subtotal + currentShipping - currentDiscount).toLocaleString('id');
+    }
+
+    function openCheckout() {
+        if (!cart.length) return;
+        const s = document.getElementById('checkout-summary');
+        let h = '';
+        cart.forEach(i => { h += `<div class="flex justify-between text-sm"><span>${i.emoji} ${i.name} (${i.weight_label}) x${i.qty}</span><span>Rp ${(i.price*i.qty).toLocaleString('id')}</span></div>`; });
+        s.innerHTML = h;
+        updateCheckoutTotal();
+        updateShipping();
+        document.getElementById('checkoutModal').classList.remove('hidden');
+        document.getElementById('checkoutModal').classList.add('flex');
+    }
+
+    function closeCheckout() { document.getElementById('checkoutModal').classList.add('hidden'); document.getElementById('checkoutModal').classList.remove('flex'); }
+
+    async function submitOrder(e) {
+        e.preventDefault();
+        if (window.__orderSubmitting) return;
+        window.__orderSubmitting = true;
+        const btn = e.target.querySelector('button[type="submit"]');
+        const errEl = document.getElementById('order-error');
+        if (btn) { btn.disabled = true; btn.textContent = 'Memproses...'; }
+        const f = e.target;
+        const data = {
+            name: f.name.value, phone: f.phone.value, address: f.address.value,
+            district: f.district.value, city: f.city.value, province: f.province.value, postal_code: f.postal_code.value,
+            payment_method: f.payment_method.value, courier: f.courier.value, notes: f.notes.value,
+            items: cart.map(i => ({ product_id: i.product_id, variant_id: i.variant_id, name: i.name, price: i.price, qty: i.qty, emoji: i.emoji, weight_label: i.weight_label })),
+            subtotal: cart.reduce((s,i)=>s+i.price*i.qty,0), shipping_cost: currentShipping, discount: currentDiscount,
+            total: cart.reduce((s,i)=>s+i.price*i.qty,0) + currentShipping - currentDiscount, promo_code: appliedPromo
+        };
+        try {
+            const r = await fetch('/api/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
+            const res = await r.json();
+            if (res.success) {
+                closeCheckout();
+                document.getElementById('order-invoice').textContent = res.invoice_no;
+                document.getElementById('successModal').classList.remove('hidden');
+                document.getElementById('successModal').classList.add('flex');
+                cart = []; saveCart(); f.reset();
+            } else if (errEl) {
+                errEl.textContent = res.message || 'Gagal membuat pesanan';
+                errEl.classList.remove('hidden');
+            }
+        } catch (err) {
+            if (errEl) { errEl.textContent = 'Terjadi kesalahan, coba lagi'; errEl.classList.remove('hidden'); }
+        } finally {
+            window.__orderSubmitting = false;
+            if (btn) { btn.disabled = false; btn.textContent = 'Buat Pesanan'; }
+        }
+    }
+
+    function closeSuccess() { document.getElementById('successModal').classList.add('hidden'); document.getElementById('successModal').classList.remove('flex'); }
+
+    document.getElementById('menuBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.toggle('hidden'));
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); const t = document.querySelector(a.getAttribute('href')); if (t) t.scrollIntoView({behavior:'smooth'}); }));
+    renderCart();
+    </script>
+</body>
+</html>

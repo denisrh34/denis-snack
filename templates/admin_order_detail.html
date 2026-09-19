@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Pesanan #{{ order.id }} - Admin Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif}h1,h2,h3,.font-display{font-family:'Poppins',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-dark text-white z-50 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span class="font-bold">D</span></div>
+                <div><p class="font-bold">Denis Snack</p><p class="text-xs text-gray-400">Admin Panel</p></div>
+            </div>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📊 Dashboard</a>
+            <a href="/admin/products" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📦 Produk</a>
+            <a href="/admin/categories" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🏷️ Kategori</a>
+            <a href="/admin/stock" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📋 Stok</a>
+            <a href="/admin/orders" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-semibold">🛒 Pesanan</a>
+            <a href="/admin/customers" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">👥 Pelanggan</a>
+            <a href="/admin/promos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎯 Promo</a>
+            <a href="/admin/reports" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📈 Laporan</a>
+            <a href="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">⚙️ Pengaturan</a>
+            <a href="/admin/theme" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎨 Tampilan Website</a>
+            <div class="border-t border-gray-700 my-4"></div>
+            <a href="/" target="_blank" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🌐 Lihat Website</a>
+            <a href="/admin/logout" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 text-red-400 transition">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <button id="sidebarBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-dark text-white w-10 h-10 rounded-xl flex items-center justify-center">☰</button>
+
+    <main class="lg:ml-64 p-6 lg:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div>
+                <a href="/admin/orders" class="text-primary text-sm font-semibold hover:underline mb-2 inline-block">← Kembali ke Pesanan</a>
+                <h1 class="font-display text-2xl lg:text-3xl font-bold text-gray-800">Pesanan #{{ order.invoice_no or order.id }}</h1>
+                <p class="text-gray-500 text-sm">{{ order.created_at }}</p>
+            </div>
+            <a href="/admin/orders/{{ order.id }}/invoice" target="_blank" class="bg-dark text-white px-5 py-2.5 rounded-xl hover:bg-gray-800 transition font-semibold text-sm flex items-center gap-2">🖨️ Cetak Invoice</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="mb-4 p-4 rounded-xl text-sm {% if cat == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">Item Pesanan</h2>
+                    <div class="space-y-3">
+                        {% for item in order.items|fromjson %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xl">{{ item.emoji }}</span>
+                                <div>
+                                    <p class="font-semibold text-gray-800">{{ item.name }}</p>
+                                    <p class="text-gray-500 text-xs">{{ item.weight }} x {{ item.qty }}</p>
+                                </div>
+                            </div>
+                            <span class="font-semibold text-green-600">{{ (item.price * item.qty)|format_rp }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="border-t mt-4 pt-4 space-y-2">
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Subtotal</span><span class="font-semibold">{{ order.subtotal|format_rp }}</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Ongkir</span><span class="font-semibold">{{ order.shipping_cost|format_rp }}</span></div>
+                        {% if order.discount > 0 %}
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Diskon</span><span class="font-semibold text-red-500">-{{ order.discount|format_rp }}</span></div>
+                        {% endif %}
+                        <div class="flex justify-between text-lg font-bold border-t pt-2"><span>Total</span><span class="text-green-600">{{ order.total|format_rp }}</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">Informasi Pelanggan</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                        <div><p class="text-gray-400">Nama</p><p class="font-semibold text-gray-800">{{ order.customer_name }}</p></div>
+                        <div><p class="text-gray-400">Telepon</p><p class="font-semibold text-gray-800">{{ order.phone }}</p></div>
+                        <div class="sm:col-span-2"><p class="text-gray-400">Alamat</p><p class="font-semibold text-gray-800">{{ order.address or '-' }}</p></div>
+                        <div><p class="text-gray-400">Kecamatan</p><p class="font-semibold text-gray-800">{{ order.district or '-' }}</p></div>
+                        <div><p class="text-gray-400">Kota</p><p class="font-semibold text-gray-800">{{ order.city or '-' }}</p></div>
+                        <div><p class="text-gray-400">Provinsi</p><p class="font-semibold text-gray-800">{{ order.province or '-' }}</p></div>
+                        <div><p class="text-gray-400">Kode Pos</p><p class="font-semibold text-gray-800">{{ order.postal_code or '-' }}</p></div>
+                    </div>
+                </div>
+
+                {% if order.notes %}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-2">Catatan</h2>
+                    <p class="text-gray-600 text-sm">{{ order.notes }}</p>
+                </div>
+                {% endif %}
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">Riwayat Status</h2>
+                    <div class="space-y-3">
+                        {% for l in logs %}
+                        <div class="flex items-start gap-3">
+                            <div class="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800">{{ l.new_status }}</p>
+                                {% if l.note %}<p class="text-xs text-gray-500">{{ l.note }}</p>{% endif %}
+                                <p class="text-xs text-gray-400">{{ l.created_at }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% if not logs %}
+                        <p class="text-gray-400 text-sm">Belum ada riwayat</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">Status Pesanan</h2>
+                    <div class="flex items-center gap-2 mb-4">
+                        {% if order.status == 'pending' %}<span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-semibold">⏳ Pending</span>
+                        {% elif order.status == 'paid' %}<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold">💰 Dibayar</span>
+                        {% elif order.status == 'processing' %}<span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-semibold">📦 Diproses</span>
+                        {% elif order.status == 'shipped' %}<span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs font-semibold">🚚 Dikirim</span>
+                        {% elif order.status == 'completed' %}<span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-semibold">✅ Selesai</span>
+                        {% elif order.status == 'cancelled' %}<span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-semibold">❌ Dibatalkan</span>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="/admin/orders/{{ order.id }}/status" class="space-y-3">
+                        <select name="status" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white text-sm">
+                            <option value="pending" {{ 'selected' if order.status == 'pending' }}>⏳ Pending</option>
+                            <option value="paid" {{ 'selected' if order.status == 'paid' }}>💰 Dibayar</option>
+                            <option value="processing" {{ 'selected' if order.status == 'processing' }}>📦 Diproses</option>
+                            <option value="shipped" {{ 'selected' if order.status == 'shipped' }}>🚚 Dikirim</option>
+                            <option value="completed" {{ 'selected' if order.status == 'completed' }}>✅ Selesai</option>
+                            <option value="cancelled" {{ 'selected' if order.status == 'cancelled' }}>❌ Dibatalkan</option>
+                        </select>
+                        <input type="text" name="note" placeholder="Catatan (opsional)" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm">
+                        <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-orange-600 transition font-semibold">💾 Update Status</button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">Pembayaran</h2>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Metode</span><span class="font-semibold">{{ order.payment_method or '-' }}</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Status</span>
+                            {% if order.payment_status == 'paid' %}
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-semibold">Lunas</span>
+                            {% else %}
+                            <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-semibold">Belum Bayar</span>
+                            {% endif %}
+                        </div>
+                        {% if order.payment_date %}
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Tanggal Bayar</span><span class="text-xs">{{ order.payment_date }}</span></div>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="/admin/orders/{{ order.id }}/payment" class="space-y-3">
+                        <select name="payment_status" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white text-sm">
+                            <option value="unpaid" {{ 'selected' if order.payment_status != 'paid' }}>Belum Bayar</option>
+                            <option value="paid" {{ 'selected' if order.payment_status == 'paid' }}>Lunas</option>
+                        </select>
+                        <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 transition font-semibold">💰 Update Pembayaran</button>
+                    </form>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">Pengiriman</h2>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Kurir</span><span class="font-semibold">{{ order.courier or '-' }}</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">No. Resi</span><span class="font-semibold text-xs">{{ order.tracking_number or '-' }}</span></div>
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Status</span><span class="font-semibold capitalize">{{ order.shipping_status or 'pending' }}</span></div>
+                        {% if order.shipped_at %}
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Dikirim</span><span class="text-xs">{{ order.shipped_at }}</span></div>
+                        {% endif %}
+                        {% if order.delivered_at %}
+                        <div class="flex justify-between text-sm"><span class="text-gray-500">Diterima</span><span class="text-xs">{{ order.delivered_at }}</span></div>
+                        {% endif %}
+                    </div>
+                    <form method="POST" action="/admin/orders/{{ order.id }}/shipping" class="space-y-3">
+                        <select name="shipping_status" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white text-sm">
+                            <option value="pending" {{ 'selected' if order.shipping_status == 'pending' }}>Pending</option>
+                            <option value="shipped" {{ 'selected' if order.shipping_status == 'shipped' }}>Dikirim</option>
+                            <option value="delivered" {{ 'selected' if order.shipping_status == 'delivered' }}>Diterima</option>
+                        </select>
+                        <input type="text" name="courier" value="{{ order.courier or '' }}" placeholder="Kurir (JNE, SiCepat, dll)" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm">
+                        <input type="text" name="tracking_number" value="{{ order.tracking_number or '' }}" placeholder="Nomor Resi" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm">
+                        <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition font-semibold">🚚 Update Pengiriman</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('sidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+    </script>
+</body>
+</html>

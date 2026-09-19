@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produk - Admin Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif}h1,h2,h3,.font-display{font-family:'Poppins',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-dark text-white z-50 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span class="font-bold">D</span></div>
+                <div><p class="font-bold">Denis Snack</p><p class="text-xs text-gray-400">Admin Panel</p></div>
+            </div>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📊 Dashboard</a>
+            <a href="/admin/products" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-semibold">📦 Produk</a>
+            <a href="/admin/categories" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🏷️ Kategori</a>
+            <a href="/admin/stock" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📋 Stok</a>
+            <a href="/admin/orders" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🛒 Pesanan</a>
+            <a href="/admin/customers" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">👥 Pelanggan</a>
+            <a href="/admin/promos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎯 Promo</a>
+            <a href="/admin/reports" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📈 Laporan</a>
+            <a href="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">⚙️ Pengaturan</a>
+            <a href="/admin/theme" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎨 Tampilan Website</a>
+            <div class="border-t border-gray-700 my-4"></div>
+            <a href="/" target="_blank" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🌐 Lihat Website</a>
+            <a href="/admin/logout" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 text-red-400 transition">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <button id="sidebarBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-dark text-white w-10 h-10 rounded-xl flex items-center justify-center">☰</button>
+
+    <main class="lg:ml-64 p-6 lg:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div>
+                <h1 class="font-display text-2xl lg:text-3xl font-bold text-gray-800">Kelola Produk</h1>
+                <p class="text-gray-500">Total {{ products|length }} produk</p>
+            </div>
+            <a href="/admin/products/add" class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-orange-600 transition font-semibold shadow-lg shadow-primary/30 flex items-center gap-2">
+                ➕ Tambah Produk
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="mb-4 p-4 rounded-xl text-sm {% if cat == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6">
+            <form method="GET" class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" name="q" value="{{ search }}" placeholder="Cari nama atau SKU produk..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm">
+                </div>
+                <div class="sm:w-48">
+                    <select name="cat" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white text-sm">
+                        <option value="">Semua Kategori</option>
+                        {% for c in categories %}
+                        <option value="{{ c.id }}" {{ 'selected' if cat_filter == c.id|string }}>{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="bg-dark text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition font-semibold text-sm">🔍 Cari</button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-left">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Produk</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Kategori</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Harga Dasar</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Varian</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Status</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        {% for p in products %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    {% if p.photo %}
+                                    <img src="/uploads/{{ p.photo }}" alt="{{ p.name }}" class="w-10 h-10 rounded-lg object-cover">
+                                    {% else %}
+                                    <span class="text-2xl">{{ p.emoji }}</span>
+                                    {% endif %}
+                                    <div>
+                                        <p class="font-semibold text-gray-800">{{ p.name }}</p>
+                                        <p class="text-gray-400 text-xs">SKU: {{ p.sku or '-' }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">{{ p.cat_name or 'Tanpa Kategori' }}</span>
+                            </td>
+                            <td class="px-6 py-4 font-semibold text-green-600">{{ p.base_price|format_rp }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ p.variants_count if p.variants_count is defined else '-' }}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-1">
+                                    {% if p.is_active %}
+                                    <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-semibold inline-block w-fit">Aktif</span>
+                                    {% else %}
+                                    <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-semibold inline-block w-fit">Nonaktif</span>
+                                    {% endif %}
+                                    {% if p.is_featured %}
+                                    <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-semibold inline-block w-fit">⭐ Featured</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="/admin/products/edit/{{ p.id }}" class="bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-200 transition">✏️ Edit</a>
+                                    <form method="POST" action="/admin/products/toggle/{{ p.id }}" class="inline">
+                                        <button type="submit" class="bg-yellow-100 text-yellow-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-yellow-200 transition">
+                                            {% if p.is_active %}🔴 Off{% else %}🟢 On{% endif %}
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="/admin/products/featured/{{ p.id }}" class="inline">
+                                        <button type="submit" class="bg-purple-100 text-purple-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-purple-200 transition">
+                                            {% if p.is_featured %}★ Unfav{% else %}☆ Fav{% endif %}
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="/admin/products/delete/{{ p.id }}" onsubmit="return confirm('Yakin hapus produk ini?')" class="inline">
+                                        <button type="submit" class="bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-200 transition">🗑</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not products %}
+                        <tr><td colspan="6" class="px-6 py-12 text-center text-gray-400">Belum ada produk. <a href="/admin/products/add" class="text-primary hover:underline">Tambah sekarang</a></td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('sidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+    </script>
+</body>
+</html>

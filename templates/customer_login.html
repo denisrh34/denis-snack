@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - Denis Snack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    {% include 'partials/theme_head.html' %}
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --pink: var(--c-primary, #F04770);
+            --peach: var(--c-secondary, #F78C6A);
+            --yellow: var(--c-accent, #FFD167);
+            --turquoise: var(--c-success, #06D7A0);
+            --blue: var(--c-info, #108AB1);
+            --navy: var(--c-dark, #073A4B);
+            --pink-light: #FDE8EE;
+            --peach-light: #FDEEE6;
+            --yellow-light: #FFF5DC;
+            --turquoise-light: #E0F9F1;
+            --blue-light: #E3F3FA;
+        }
+        body { font-family: 'Poppins', sans-serif !important; background: #FFF8F5 !important; overflow-x: hidden; }
+
+        /* ── Layout ── */
+        .login-wrapper { display: flex; min-height: 100vh; }
+        .left-panel { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .right-panel { flex: 0 0 480px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #FFFFFF; position: relative; z-index: 10; }
+
+        @media (max-width: 1024px) {
+            .login-wrapper { flex-direction: column; }
+            .left-panel { min-height: 45vh; flex: none; }
+            .right-panel { flex: none; width: 100%; padding: 32px 24px; margin-top: -40px; border-radius: 32px 32px 0 0; position: relative; z-index: 20; }
+        }
+
+        /* ── Background Blobs ── */
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; pointer-events: none; }
+        .blob-1 { width: 400px; height: 400px; background: var(--pink); top: -10%; left: -5%; }
+        .blob-2 { width: 350px; height: 350px; background: var(--peach); bottom: -5%; right: -8%; }
+        .blob-3 { width: 280px; height: 280px; background: var(--yellow); top: 30%; right: 15%; }
+        .blob-4 { width: 200px; height: 200px; background: var(--turquoise); bottom: 20%; left: 10%; }
+
+        /* ── Parallax Container ── */
+        .parallax-scene { position: absolute; inset: 0; pointer-events: none; }
+        .parallax-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease-out; will-change: transform; }
+
+        /* ── Floating Snack Elements ── */
+        .snack-float { position: absolute; font-size: 2.5rem; opacity: 0.7; pointer-events: none; animation: snackFloat 5s ease-in-out infinite; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.08)); }
+        .snack-float:nth-child(1) { top: 12%; left: 15%; animation-duration: 5.2s; font-size: 3rem; }
+        .snack-float:nth-child(2) { top: 65%; left: 8%; animation-duration: 6.1s; animation-delay: -1.2s; font-size: 2.2rem; }
+        .snack-float:nth-child(3) { top: 20%; right: 12%; animation-duration: 5.8s; animation-delay: -2.5s; font-size: 2.8rem; }
+        .snack-float:nth-child(4) { bottom: 18%; right: 20%; animation-duration: 6.5s; animation-delay: -0.8s; font-size: 2rem; }
+        .snack-float:nth-child(5) { top: 45%; left: 25%; animation-duration: 5.5s; animation-delay: -3s; font-size: 2.4rem; opacity: 0.5; }
+        .snack-float:nth-child(6) { bottom: 35%; left: 55%; animation-duration: 7s; animation-delay: -1.8s; font-size: 1.8rem; opacity: 0.4; }
+        .snack-float:nth-child(7) { top: 8%; left: 55%; animation-duration: 5.9s; animation-delay: -4s; font-size: 2.1rem; opacity: 0.55; }
+        .snack-float:nth-child(8) { bottom: 8%; left: 40%; animation-duration: 6.8s; animation-delay: -2s; font-size: 2.6rem; opacity: 0.45; }
+
+        @keyframes snackFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-12px) rotate(3deg); }
+            50% { transform: translateY(-6px) rotate(-2deg); }
+            75% { transform: translateY(-14px) rotate(1deg); }
+        }
+
+        /* ── Center Brand ── */
+        .brand-center { text-align: center; z-index: 5; position: relative; }
+        .brand-logo { width: 110px; height: 110px; background: var(--pink); border-radius: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 20px 60px rgba(240,71,112,0.3); animation: brandFadeIn 0.8s ease-out both; }
+        .brand-logo span { color: #FFF; font-size: 3rem; font-weight: 900; }
+        .brand-title { font-size: 2.2rem; font-weight: 800; color: var(--navy); margin-bottom: 8px; animation: brandFadeIn 0.8s ease-out 0.15s both; }
+        .brand-tagline { font-size: 1rem; color: #6B8A99; font-weight: 400; animation: brandFadeIn 0.8s ease-out 0.3s both; max-width: 280px; margin: 0 auto; line-height: 1.6; }
+
+        @keyframes brandFadeIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── Decorative Shapes ── */
+        .deco-shape { position: absolute; border-radius: 50%; pointer-events: none; }
+        .deco-1 { width: 180px; height: 180px; border: 3px solid var(--pink); opacity: 0.12; top: 10%; right: 8%; }
+        .deco-2 { width: 120px; height: 120px; background: var(--yellow); opacity: 0.08; bottom: 15%; left: 5%; border-radius: 24px; transform: rotate(45deg); }
+        .deco-3 { width: 80px; height: 80px; border: 2px solid var(--turquoise); opacity: 0.15; top: 55%; right: 25%; border-radius: 20px; }
+
+        /* ── Login Card ── */
+        .login-card { width: 100%; max-width: 400px; animation: cardSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) both; }
+        .login-card h2 { font-size: 1.75rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+        .login-card .subtitle { color: #8BA3AE; font-size: 0.9rem; margin-bottom: 32px; }
+        .login-card .subtitle a { color: var(--pink); font-weight: 600; text-decoration: none; }
+        .login-card .subtitle a:hover { text-decoration: underline; }
+
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Form ── */
+        .form-group { margin-bottom: 20px; opacity: 0; animation: fieldIn 0.5s ease-out both; }
+        .form-group:nth-child(1) { animation-delay: 0.3s; }
+        .form-group:nth-child(2) { animation-delay: 0.45s; }
+        .form-group:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes fieldIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 8px; letter-spacing: 0.02em; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; opacity: 0.4; pointer-events: none; transition: opacity 0.3s; }
+        .form-input {
+            width: 100%; padding: 14px 16px 14px 48px; border: 2px solid #E8EDF2; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 0.95rem; color: var(--navy);
+            background: #F7F9FB; outline: none; transition: all 0.3s ease;
+        }
+        .form-input::placeholder { color: #B0C4CE; }
+        .form-input:focus { border-color: var(--pink); background: #FFF; box-shadow: 0 0 0 4px rgba(240,71,112,0.08); }
+        .form-input:focus + .input-icon-wrap .input-icon { opacity: 0.7; }
+        .input-icon-wrap { position: absolute; left: 0; top: 0; bottom: 0; width: 48px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+
+        /* ── Password Toggle ── */
+        .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.35; transition: opacity 0.3s; padding: 4px; }
+        .pw-toggle:hover { opacity: 0.7; }
+        .pw-toggle svg { width: 20px; height: 20px; stroke: var(--navy); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ── Remember Me ── */
+        .remember-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; opacity: 0; animation: fieldIn 0.5s ease-out 0.6s both; }
+        .remember-label { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #6B8A99; cursor: pointer; }
+        .remember-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--pink); cursor: pointer; }
+        .forgot-link { font-size: 0.82rem; color: var(--pink); text-decoration: none; font-weight: 500; }
+        .forgot-link:hover { text-decoration: underline; }
+
+        /* ── Login Button ── */
+        .login-btn {
+            width: 100%; padding: 15px; background: var(--pink); color: #FFF; border: none; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; position: relative; overflow: hidden; letter-spacing: 0.03em;
+            box-shadow: 0 8px 30px rgba(240,71,112,0.3); opacity: 0; animation: fieldIn 0.5s ease-out 0.75s both;
+        }
+        .login-btn:hover { background: #E03A63; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,71,112,0.4); }
+        .login-btn:active { transform: translateY(0); }
+        .login-btn::after {
+            content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* ── Divider ── */
+        .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; opacity: 0; animation: fieldIn 0.5s ease-out 0.85s both; }
+        .divider-line { flex: 1; height: 1px; background: #E8EDF2; }
+        .divider span { font-size: 0.78rem; color: #B0C4CE; font-weight: 500; }
+
+        /* ── Social Login ── */
+        .social-row { display: flex; gap: 12px; opacity: 0; animation: fieldIn 0.5s ease-out 0.9s both; }
+        .social-btn {
+            flex: 1; padding: 12px; border: 2px solid #E8EDF2; border-radius: 12px; background: #FFF;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 500; color: var(--navy);
+            cursor: pointer; transition: all 0.3s;
+        }
+        .social-btn:hover { border-color: var(--pink); background: var(--pink-light); }
+        .social-btn svg { width: 18px; height: 18px; }
+
+        /* ── Footer Link ── */
+        .back-link { text-align: center; margin-top: 28px; opacity: 0; animation: fieldIn 0.5s ease-out 1s both; }
+        .back-link a { color: #8BA3AE; font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .back-link a:hover { color: var(--pink); }
+
+        /* ── Flash Messages ── */
+        .flash-msg { padding: 12px 16px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 20px; font-weight: 500; opacity: 0; animation: fieldIn 0.4s ease-out both; }
+        .flash-error { background: #FDE8EE; color: #C53050; border: 1px solid #F8B4C4; }
+        .flash-success { background: var(--turquoise-light); color: #059669; border: 1px solid #A7F3D0; }
+
+        /* ── Mobile Bottom Sheet ── */
+        @media (max-width: 1024px) {
+            .left-panel { background: linear-gradient(135deg, var(--pink) 0%, var(--peach) 50%, var(--yellow) 100%); }
+            .left-panel .blob { display: none; }
+            .brand-logo { width: 80px; height: 80px; border-radius: 24px; }
+            .brand-logo span { font-size: 2.2rem; }
+            .brand-title { font-size: 1.6rem; }
+            .brand-tagline { font-size: 0.85rem; }
+            .snack-float { font-size: 1.8rem !important; }
+            .right-panel { box-shadow: 0 -10px 40px rgba(0,0,0,0.08); }
+        }
+
+        @media (max-width: 480px) {
+            .right-panel { padding: 28px 20px; }
+            .login-card h2 { font-size: 1.5rem; }
+            .social-row { flex-direction: column; }
+        }
+
+        /* ── Smooth scroll lock ── */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body class="{{ theme.body_class }}">
+    <div class="login-wrapper">
+        <!-- ═══ LEFT PANEL ═══ -->
+        <div class="left-panel" id="leftPanel">
+            <div class="blob blob-1" data-speed="0.015"></div>
+            <div class="blob blob-2" data-speed="0.02"></div>
+            <div class="blob blob-3" data-speed="0.012"></div>
+            <div class="blob blob-4" data-speed="0.018"></div>
+
+            <div class="deco-shape deco-1" data-speed="0.025"></div>
+            <div class="deco-shape deco-2" data-speed="0.03"></div>
+            <div class="deco-shape deco-3" data-speed="0.02"></div>
+
+            <!-- Floating Snacks (Layer 3 — biggest movement) -->
+            <div class="parallax-scene" id="parallaxScene">
+                <div class="snack-float" data-speed="0.04" style="top:12%;left:15%">🍿</div>
+                <div class="snack-float" data-speed="0.05" style="top:65%;left:8%">🍪</div>
+                <div class="snack-float" data-speed="0.035" style="top:20%;right:12%">🍬</div>
+                <div class="snack-float" data-speed="0.045" style="bottom:18%;right:20%">🍩</div>
+                <div class="snack-float" data-speed="0.03" style="top:45%;left:25%">🥨</div>
+                <div class="snack-float" data-speed="0.055" style="bottom:35%;left:55%">🧁</div>
+                <div class="snack-float" data-speed="0.04" style="top:8%;left:55%">🍟</div>
+                <div class="snack-float" data-speed="0.035" style="bottom:8%;left:40%">🍘</div>
+            </div>
+
+            <!-- Brand -->
+            <div class="brand-center" data-speed="0.008">
+                <div class="brand-logo">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">{% else %}<span>{{ theme.logo_text or 'D' }}</span>{% endif %}</div>
+                <h1 class="brand-title">Denis Snack</h1>
+                <p class="brand-tagline">Snack Favorit untuk Setiap Momen</p>
+            </div>
+        </div>
+
+        <!-- ═══ RIGHT PANEL ═══ -->
+        <div class="right-panel">
+            <div class="login-card">
+                <h2>Selamat Datang</h2>
+                <p class="subtitle">Masuk untuk melanjutkan belanja<br><a href="/register">Belum punya akun? Daftar</a></p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for cat, msg in messages %}
+                <div class="flash-msg {% if cat == 'error' %}flash-error{% else %}flash-success{% endif %}">{{ msg }}</div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" name="email" required class="form-input" placeholder="email@contoh.com" autocomplete="email">
+                            <div class="input-icon-wrap"><span class="input-icon">✉️</span></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" name="password" id="pwField" required class="form-input" placeholder="Masukkan password" autocomplete="current-password">
+                            <div class="input-icon-wrap"><span class="input-icon">🔒</span></div>
+                            <button type="button" class="pw-toggle" id="pwToggle" tabindex="-1" aria-label="Toggle password visibility">
+                                <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="eye-closed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="remember-row">
+                        <label class="remember-label">
+                            <input type="checkbox" name="remember"> Ingat saya
+                        </label>
+                        <a href="#" class="forgot-link">Lupa password?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn">MASUK →</button>
+                </form>
+
+                <div class="divider"><div class="divider-line"></div><span>atau</span><div class="divider-line"></div></div>
+
+                <div class="social-row">
+                    <button type="button" class="social-btn" onclick="window.location.href='/login'">
+                        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        Google
+                    </button>
+                    <button type="button" class="social-btn" onclick="window.location.href='/register'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                        Daftar
+                    </button>
+                </div>
+
+                <div class="back-link"><a href="/">← Kembali ke Beranda</a></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    /* ═══════════════════════════════════════════
+       PARALLAX ENGINE
+    ═══════════════════════════════════════════ */
+    (function() {
+        const scene = document.getElementById('parallaxScene');
+        const leftPanel = document.getElementById('leftPanel');
+        const allLayers = document.querySelectorAll('[data-speed]');
+        let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+        let rafId = null;
+        const MAX_MOVE = 22;
+        const LERP = 0.08;
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        function updateParallax() {
+            currentX = lerp(currentX, targetX, LERP);
+            currentY = lerp(currentY, targetY, LERP);
+            allLayers.forEach(el => {
+                const speed = parseFloat(el.dataset.speed) || 0.02;
+                const x = currentX * speed * 100;
+                const y = currentY * speed * 100;
+                el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+            });
+            rafId = requestAnimationFrame(updateParallax);
+        }
+
+        /* Mouse */
+        leftPanel.addEventListener('mousemove', e => {
+            const rect = leftPanel.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            targetX = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (e.clientX - cx) / rect.width * MAX_MOVE * 2));
+            targetY = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (e.clientY - cy) / rect.height * MAX_MOVE * 2));
+        });
+
+        leftPanel.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+
+        /* Touch */
+        leftPanel.addEventListener('touchmove', e => {
+            const touch = e.touches[0];
+            const rect = leftPanel.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            targetX = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (touch.clientX - cx) / rect.width * MAX_MOVE * 1.5));
+            targetY = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (touch.clientY - cy) / rect.height * MAX_MOVE * 1.5));
+        }, { passive: true });
+
+        leftPanel.addEventListener('touchend', () => { targetX = 0; targetY = 0; });
+
+        /* Device orientation (gyroscope fallback) */
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', e => {
+                if (e.gamma !== null && e.beta !== null) {
+                    targetX = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, e.gamma * 0.5));
+                    targetY = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (e.beta - 45) * 0.5));
+                }
+            }, { passive: true });
+        }
+
+        rafId = requestAnimationFrame(updateParallax);
+    })();
+
+    /* ═══════════════════════════════════════════
+       PASSWORD TOGGLE
+    ═══════════════════════════════════════════ */
+    (function() {
+        const pw = document.getElementById('pwField');
+        const toggle = document.getElementById('pwToggle');
+        const eyeOpen = toggle.querySelector('.eye-open');
+        const eyeClosed = toggle.querySelector('.eye-closed');
+        toggle.addEventListener('click', () => {
+            const isPassword = pw.type === 'password';
+            pw.type = isPassword ? 'text' : 'password';
+            eyeOpen.style.display = isPassword ? 'none' : '';
+            eyeClosed.style.display = isPassword ? '' : 'none';
+        });
+    })();
+    </script>
+</body>
+</html>

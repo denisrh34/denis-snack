@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promo - Admin Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif}h1,h2,h3,.font-display{font-family:'Poppins',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-dark text-white z-50 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span class="font-bold">D</span></div>
+                <div><p class="font-bold">Denis Snack</p><p class="text-xs text-gray-400">Admin Panel</p></div>
+            </div>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📊 Dashboard</a>
+            <a href="/admin/products" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📦 Produk</a>
+            <a href="/admin/categories" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🏷️ Kategori</a>
+            <a href="/admin/stock" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📋 Stok</a>
+            <a href="/admin/orders" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🛒 Pesanan</a>
+            <a href="/admin/customers" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">👥 Pelanggan</a>
+            <a href="/admin/promos" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-semibold">🎯 Promo</a>
+            <a href="/admin/reports" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📈 Laporan</a>
+            <a href="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">⚙️ Pengaturan</a>
+            <a href="/admin/theme" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎨 Tampilan Website</a>
+            <div class="border-t border-gray-700 my-4"></div>
+            <a href="/" target="_blank" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🌐 Lihat Website</a>
+            <a href="/admin/logout" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 text-red-400 transition">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <button id="sidebarBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-dark text-white w-10 h-10 rounded-xl flex items-center justify-center">☰</button>
+
+    <main class="lg:ml-64 p-6 lg:p-8">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+            <div>
+                <h1 class="font-display text-2xl lg:text-3xl font-bold text-gray-800">Kelola Promo</h1>
+                <p class="text-gray-500">Total {{ promos|length }} promo</p>
+            </div>
+            <button onclick="openModal('addModal')" class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-orange-600 transition font-semibold shadow-lg shadow-primary/30 flex items-center gap-2">
+                ➕ Tambah Promo
+            </button>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="mb-4 p-4 rounded-xl text-sm {% if cat == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-left">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Kode</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Diskon</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Min. Beli</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Periode</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Penggunaan</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600">Status</th>
+                            <th class="px-6 py-3 font-semibold text-gray-600 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        {% for p in promos %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <span class="bg-dark text-white px-3 py-1 rounded-lg text-xs font-bold tracking-wider">{{ p.code }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if p.discount_type == 'percent' %}
+                                <span class="font-semibold text-primary">{{ p.discount_value }}%</span>
+                                {% if p.max_discount > 0 %}<span class="text-gray-400 text-xs">(max {{ p.max_discount|format_rp }})</span>{% endif %}
+                                {% else %}
+                                <span class="font-semibold text-primary">{{ p.discount_value|format_rp }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-gray-600">{{ p.min_purchase|format_rp }}</td>
+                            <td class="px-6 py-4 text-gray-500 text-xs">
+                                {{ p.start_date or 'N/A' }} s/d {{ p.end_date or 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="font-semibold">{{ p.used_count }}</span>
+                                {% if p.usage_limit > 0 %}<span class="text-gray-400">/{{ p.usage_limit }}</span>{% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if p.is_active %}
+                                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-semibold">Aktif</span>
+                                {% else %}
+                                <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-xs font-semibold">Nonaktif</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button onclick="openEditModal('{{ p.id }}', '{{ p.code }}', '{{ p.discount_type }}', '{{ p.discount_value }}', '{{ p.min_purchase }}', '{{ p.max_discount }}', '{{ p.start_date or '' }}', '{{ p.end_date or '' }}', '{{ p.usage_limit }}', {{ 'true' if p.is_active else 'false' }})" class="bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-200 transition">✏️ Edit</button>
+                                    <form method="POST" action="/admin/promos/delete/{{ p.id }}" onsubmit="return confirm('Yakin hapus promo ini?')" class="inline">
+                                        <button type="submit" class="bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-200 transition">🗑</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% if not promos %}
+                        <tr><td colspan="7" class="px-6 py-12 text-center text-gray-400">Belum ada promo. <button onclick="openModal('addModal')" class="text-primary hover:underline">Buat sekarang</button></td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="addModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="font-display font-bold text-lg text-gray-800 mb-4">Tambah Promo</h3>
+            <form method="POST" action="/admin/promos/add" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kode Promo *</label>
+                    <input type="text" name="code" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none uppercase" placeholder="CONTOH">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe Diskon *</label>
+                        <select name="discount_type" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                            <option value="percent">Persen (%)</option>
+                            <option value="fixed">Nominal (Rp)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nilai Diskon *</label>
+                        <input type="number" name="discount_value" required min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="10">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Min. Pembelian</label>
+                        <input type="number" name="min_purchase" value="0" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Max. Diskon</label>
+                        <input type="number" name="max_discount" value="0" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Mulai</label>
+                        <input type="date" name="start_date" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Akhir</label>
+                        <input type="date" name="end_date" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Batas Penggunaan (0 = unlimited)</label>
+                    <input type="number" name="usage_limit" value="0" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                </div>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_active" value="1" checked class="w-5 h-5 text-primary rounded focus:ring-primary">
+                    <span class="text-sm font-semibold text-gray-700">Aktif</span>
+                </label>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 bg-primary text-white py-3 rounded-xl hover:bg-orange-600 transition font-semibold">💾 Simpan</button>
+                    <button type="button" onclick="closeModal('addModal')" class="flex-1 bg-gray-200 text-gray-600 py-3 rounded-xl hover:bg-gray-300 transition font-semibold">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="font-display font-bold text-lg text-gray-800 mb-4">Edit Promo</h3>
+            <form id="editForm" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Kode Promo *</label>
+                    <input type="text" name="code" id="edit_code" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none uppercase">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tipe Diskon *</label>
+                        <select name="discount_type" id="edit_discount_type" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                            <option value="percent">Persen (%)</option>
+                            <option value="fixed">Nominal (Rp)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nilai Diskon *</label>
+                        <input type="number" name="discount_value" id="edit_discount_value" required min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Min. Pembelian</label>
+                        <input type="number" name="min_purchase" id="edit_min_purchase" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Max. Diskon</label>
+                        <input type="number" name="max_discount" id="edit_max_discount" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Mulai</label>
+                        <input type="date" name="start_date" id="edit_start_date" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Akhir</label>
+                        <input type="date" name="end_date" id="edit_end_date" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Batas Penggunaan (0 = unlimited)</label>
+                    <input type="number" name="usage_limit" id="edit_usage_limit" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+                </div>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="is_active" id="edit_is_active" value="1" class="w-5 h-5 text-primary rounded focus:ring-primary">
+                    <span class="text-sm font-semibold text-gray-700">Aktif</span>
+                </label>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 bg-primary text-white py-3 rounded-xl hover:bg-orange-600 transition font-semibold">💾 Simpan</button>
+                    <button type="button" onclick="closeModal('editModal')" class="flex-1 bg-gray-200 text-gray-600 py-3 rounded-xl hover:bg-gray-300 transition font-semibold">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('sidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+
+        function openModal(id) {
+            const m = document.getElementById(id);
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            m.classList.add('hidden');
+            m.classList.remove('flex');
+        }
+
+        function openEditModal(id, code, dtype, dvalue, minp, maxd, start, end, usage, active) {
+            document.getElementById('editForm').action = '/admin/promos/edit/' + id;
+            document.getElementById('edit_code').value = code;
+            document.getElementById('edit_discount_type').value = dtype;
+            document.getElementById('edit_discount_value').value = dvalue;
+            document.getElementById('edit_min_purchase').value = minp;
+            document.getElementById('edit_max_discount').value = maxd;
+            document.getElementById('edit_start_date').value = start;
+            document.getElementById('edit_end_date').value = end;
+            document.getElementById('edit_usage_limit').value = usage;
+            document.getElementById('edit_is_active').checked = active;
+            openModal('editModal');
+        }
+    </script>
+</body>
+</html>

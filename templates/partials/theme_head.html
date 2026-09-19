@@ -1,0 +1,41 @@
+<link href="https://fonts.googleapis.com/css2?family={{ theme.font_display|replace(' ', '+') }}:wght@400;500;600;700;800&family={{ theme.font_body|replace(' ', '+') }}:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+    --c-primary: {{ theme.primary }};
+    --c-secondary: {{ theme.secondary }};
+    --c-accent: {{ theme.accent }};
+    --c-dark: {{ theme.dark }};
+    --c-light: {{ theme.light }};
+    --c-success: {{ theme.success }};
+    --c-info: {{ theme.info }};
+    --ft-display: "{{ theme.font_display }}";
+    --ft-body: "{{ theme.font_body }}";
+}
+body{
+    font-family: var(--ft-body), sans-serif !important;
+}
+h1, h2, h3, h4, .font-display{
+    font-family: var(--ft-display), sans-serif !important;
+}
+{% if theme.bg_type == 'gradient' %}
+body{ background: linear-gradient(160deg, {{ theme.bg_gradient_from }} 0%, {{ theme.bg_gradient_to }} 100%) !important; background-attachment: fixed; }
+{% elif theme.bg_type == 'image' and theme.bg_image %}
+body{ background-image: url('/uploads/{{ theme.bg_image }}') !important; background-size: cover !important; background-attachment: fixed !important; }
+{% endif %}
+{% if theme.font_scale == 'small' %}
+html{ font-size: 14px; }
+{% elif theme.font_scale == 'large' %}
+html{ font-size: 18px; }
+{% endif %}
+
+/* Button style */
+body.theme-btn-pill button:not(.rounded-full), body.theme-btn-pill a.bg-primary:not(.rounded-full), body.theme-btn-pill a.bg-secondary:not(.rounded-full){ border-radius: 9999px; }
+body.theme-btn-sharp button:not(.rounded-full), body.theme-btn-sharp a.bg-primary:not(.rounded-full), body.theme-btn-sharp a.bg-secondary:not(.rounded-full){ border-radius: 0 !important; }
+
+/* Card style */
+body.theme-card-sharp main .bg-white, body.theme-card-sharp main .bg-light{ border-radius: 0 !important; }
+body.theme-card-round main .bg-white, body.theme-card-round main .bg-light{ border-radius: 20px !important; }
+
+/* Animation off */
+body.theme-anim-off *, body.theme-anim-off *::before, body.theme-anim-off *::after{ transition: none !important; animation: none !important; }
+</style>

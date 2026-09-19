@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Denis Snack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --pink: #F04770; --peach: #F78C6A; --yellow: #FFD167;
+            --turquoise: #06D7A0; --blue: #108AB1; --navy: #073A4B;
+        }
+        body { font-family: 'Poppins', sans-serif; background: #FFF8F5; overflow-x: hidden; }
+
+        .login-wrapper { display: flex; min-height: 100vh; }
+        .left-panel { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .right-panel { flex: 0 0 480px; display: flex; align-items: center; justify-content: center; padding: 40px; background: #FFFFFF; position: relative; z-index: 10; }
+
+        @media (max-width: 1024px) {
+            .login-wrapper { flex-direction: column; }
+            .left-panel { min-height: 40vh; flex: none; }
+            .right-panel { flex: none; width: 100%; padding: 32px 24px; margin-top: -40px; border-radius: 32px 32px 0 0; position: relative; z-index: 20; }
+        }
+
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; pointer-events: none; }
+        .blob-1 { width: 400px; height: 400px; background: var(--navy); top: -10%; left: -5%; }
+        .blob-2 { width: 350px; height: 350px; background: var(--blue); bottom: -5%; right: -8%; }
+        .blob-3 { width: 280px; height: 280px; background: var(--turquoise); top: 30%; right: 15%; }
+        .blob-4 { width: 200px; height: 200px; background: var(--pink); bottom: 20%; left: 10%; }
+
+        .parallax-scene { position: absolute; inset: 0; pointer-events: none; }
+        .snack-float { position: absolute; font-size: 2.5rem; opacity: 0.7; pointer-events: none; animation: snackFloat 5s ease-in-out infinite; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.08)); }
+        .snack-float:nth-child(1) { top: 15%; left: 12%; animation-duration: 5.2s; font-size: 3rem; }
+        .snack-float:nth-child(2) { top: 60%; left: 10%; animation-duration: 6.1s; animation-delay: -1.2s; font-size: 2.2rem; }
+        .snack-float:nth-child(3) { top: 18%; right: 15%; animation-duration: 5.8s; animation-delay: -2.5s; font-size: 2.8rem; }
+        .snack-float:nth-child(4) { bottom: 20%; right: 18%; animation-duration: 6.5s; animation-delay: -0.8s; font-size: 2rem; }
+        .snack-float:nth-child(5) { top: 42%; left: 22%; animation-duration: 5.5s; animation-delay: -3s; font-size: 2.4rem; opacity: 0.5; }
+        .snack-float:nth-child(6) { bottom: 30%; left: 52%; animation-duration: 7s; animation-delay: -1.8s; font-size: 1.8rem; opacity: 0.4; }
+
+        @keyframes snackFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-12px) rotate(3deg); }
+            50% { transform: translateY(-6px) rotate(-2deg); }
+            75% { transform: translateY(-14px) rotate(1deg); }
+        }
+
+        .deco-shape { position: absolute; border-radius: 50%; pointer-events: none; }
+        .deco-1 { width: 160px; height: 160px; border: 3px solid var(--navy); opacity: 0.1; top: 12%; right: 10%; }
+        .deco-2 { width: 100px; height: 100px; background: var(--turquoise); opacity: 0.06; bottom: 18%; left: 8%; border-radius: 20px; transform: rotate(45deg); }
+        .deco-3 { width: 70px; height: 70px; border: 2px solid var(--yellow); opacity: 0.12; top: 58%; right: 22%; border-radius: 18px; }
+
+        .brand-center { text-align: center; z-index: 5; position: relative; }
+        .brand-logo { width: 100px; height: 100px; background: var(--navy); border-radius: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 20px 60px rgba(7,58,75,0.3); animation: brandFadeIn 0.8s ease-out both; }
+        .brand-logo span { color: #FFF; font-size: 2.8rem; font-weight: 900; }
+        .brand-title { font-size: 2rem; font-weight: 800; color: var(--navy); margin-bottom: 6px; animation: brandFadeIn 0.8s ease-out 0.15s both; }
+        .brand-tagline { font-size: 0.9rem; color: #6B8A99; font-weight: 400; animation: brandFadeIn 0.8s ease-out 0.3s both; }
+        .admin-badge { display: inline-block; background: var(--navy); color: #FFF; font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 12px; animation: brandFadeIn 0.8s ease-out 0.45s both; letter-spacing: 0.08em; }
+
+        @keyframes brandFadeIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .login-card { width: 100%; max-width: 400px; animation: cardSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) both; }
+        .login-card h2 { font-size: 1.75rem; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+        .login-card .subtitle { color: #8BA3AE; font-size: 0.9rem; margin-bottom: 32px; }
+
+        @keyframes cardSlideIn { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-group { margin-bottom: 20px; opacity: 0; animation: fieldIn 0.5s ease-out both; }
+        .form-group:nth-child(1) { animation-delay: 0.3s; }
+        .form-group:nth-child(2) { animation-delay: 0.45s; }
+
+        @keyframes fieldIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; opacity: 0.4; pointer-events: none; transition: opacity 0.3s; }
+        .form-input {
+            width: 100%; padding: 14px 16px 14px 48px; border: 2px solid #E8EDF2; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 0.95rem; color: var(--navy);
+            background: #F7F9FB; outline: none; transition: all 0.3s ease;
+        }
+        .form-input::placeholder { color: #B0C4CE; }
+        .form-input:focus { border-color: var(--navy); background: #FFF; box-shadow: 0 0 0 4px rgba(7,58,75,0.08); }
+        .input-icon-wrap { position: absolute; left: 0; top: 0; bottom: 0; width: 48px; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+
+        .pw-toggle { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2rem; opacity: 0.35; transition: opacity 0.3s; padding: 4px; }
+        .pw-toggle:hover { opacity: 0.7; }
+        .pw-toggle svg { width: 20px; height: 20px; stroke: var(--navy); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .remember-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; opacity: 0; animation: fieldIn 0.5s ease-out 0.6s both; }
+        .remember-label { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #6B8A99; cursor: pointer; }
+        .remember-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; }
+
+        .login-btn {
+            width: 100%; padding: 15px; background: var(--navy); color: #FFF; border: none; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; position: relative; overflow: hidden; letter-spacing: 0.03em;
+            box-shadow: 0 8px 30px rgba(7,58,75,0.25); opacity: 0; animation: fieldIn 0.5s ease-out 0.75s both;
+        }
+        .login-btn:hover { background: #0A4D63; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(7,58,75,0.35); }
+        .login-btn:active { transform: translateY(0); }
+        .login-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%); pointer-events: none; }
+
+        .back-link { text-align: center; margin-top: 28px; opacity: 0; animation: fieldIn 0.5s ease-out 0.85s both; }
+        .back-link a { color: #8BA3AE; font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .back-link a:hover { color: var(--navy); }
+
+        .flash-msg { padding: 12px 16px; border-radius: 12px; font-size: 0.85rem; margin-bottom: 20px; font-weight: 500; opacity: 0; animation: fieldIn 0.4s ease-out both; }
+        .flash-error { background: #FDE8EE; color: #C53050; border: 1px solid #F8B4C4; }
+        .flash-success { background: #E0F9F1; color: #059669; border: 1px solid #A7F3D0; }
+
+        @media (max-width: 1024px) {
+            .left-panel { background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 50%, var(--turquoise) 100%); }
+            .left-panel .blob { display: none; }
+            .brand-logo { width: 72px; height: 72px; border-radius: 20px; }
+            .brand-logo span { font-size: 2rem; }
+            .brand-title { font-size: 1.4rem; }
+            .snack-float { font-size: 1.6rem !important; }
+            .right-panel { box-shadow: 0 -10px 40px rgba(0,0,0,0.08); }
+        }
+        @media (max-width: 480px) { .right-panel { padding: 28px 20px; } .login-card h2 { font-size: 1.5rem; } }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="left-panel" id="leftPanel">
+            <div class="blob blob-1" data-speed="0.015"></div>
+            <div class="blob blob-2" data-speed="0.02"></div>
+            <div class="blob blob-3" data-speed="0.012"></div>
+            <div class="blob blob-4" data-speed="0.018"></div>
+            <div class="deco-shape deco-1" data-speed="0.025"></div>
+            <div class="deco-shape deco-2" data-speed="0.03"></div>
+            <div class="deco-shape deco-3" data-speed="0.02"></div>
+
+            <div class="parallax-scene" id="parallaxScene">
+                <div class="snack-float" data-speed="0.04" style="top:15%;left:12%">🍿</div>
+                <div class="snack-float" data-speed="0.05" style="top:60%;left:10%">🍪</div>
+                <div class="snack-float" data-speed="0.035" style="top:18%;right:15%">🍬</div>
+                <div class="snack-float" data-speed="0.045" style="bottom:20%;right:18%">🍩</div>
+                <div class="snack-float" data-speed="0.03" style="top:42%;left:22%">🥨</div>
+                <div class="snack-float" data-speed="0.055" style="bottom:30%;left:52%">🍘</div>
+            </div>
+
+            <div class="brand-center" data-speed="0.008">
+                <div class="brand-logo"><span>D</span></div>
+                <h1 class="brand-title">Denis Snack</h1>
+                <p class="brand-tagline">Panel Manajemen</p>
+                <span class="admin-badge">🔐 ADMIN ACCESS</span>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="login-card">
+                <h2>Admin Login</h2>
+                <p class="subtitle">Masuk ke panel manajemen Denis Snack</p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for cat, msg in messages %}
+                <div class="flash-msg {% if cat == 'error' %}flash-error{% else %}flash-success{% endif %}">{{ msg }}</div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <div class="input-wrapper">
+                            <input type="text" name="username" required class="form-input" placeholder="Masukkan username" autocomplete="username">
+                            <div class="input-icon-wrap"><span class="input-icon">👤</span></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" name="password" id="pwField" required class="form-input" placeholder="Masukkan password" autocomplete="current-password">
+                            <div class="input-icon-wrap"><span class="input-icon">🔒</span></div>
+                            <button type="button" class="pw-toggle" id="pwToggle" tabindex="-1" aria-label="Toggle password">
+                                <svg class="eye-open" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="eye-closed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="remember-row">
+                        <label class="remember-label"><input type="checkbox" name="remember"> Ingat saya</label>
+                    </div>
+
+                    <button type="submit" class="login-btn">MASUK →</button>
+                </form>
+
+                <div class="back-link"><a href="/">← Kembali ke Beranda</a></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const leftPanel = document.getElementById('leftPanel');
+        const allLayers = document.querySelectorAll('[data-speed]');
+        let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
+        const MAX_MOVE = 22, LERP = 0.08;
+        function lerp(a, b, t) { return a + (b - a) * t; }
+        function update() {
+            currentX = lerp(currentX, targetX, LERP);
+            currentY = lerp(currentY, targetY, LERP);
+            allLayers.forEach(el => {
+                const speed = parseFloat(el.dataset.speed) || 0.02;
+                el.style.transform = `translate3d(${currentX * speed * 100}px, ${currentY * speed * 100}px, 0)`;
+            });
+            requestAnimationFrame(update);
+        }
+        leftPanel.addEventListener('mousemove', e => {
+            const rect = leftPanel.getBoundingClientRect();
+            targetX = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (e.clientX - (rect.left + rect.width/2)) / rect.width * MAX_MOVE * 2));
+            targetY = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (e.clientY - (rect.top + rect.height/2)) / rect.height * MAX_MOVE * 2));
+        });
+        leftPanel.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+        leftPanel.addEventListener('touchmove', e => {
+            const t = e.touches[0], rect = leftPanel.getBoundingClientRect();
+            targetX = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (t.clientX - (rect.left + rect.width/2)) / rect.width * MAX_MOVE * 1.5));
+            targetY = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (t.clientY - (rect.top + rect.height/2)) / rect.height * MAX_MOVE * 1.5));
+        }, { passive: true });
+        leftPanel.addEventListener('touchend', () => { targetX = 0; targetY = 0; });
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', e => {
+                if (e.gamma !== null) {
+                    targetX = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, e.gamma * 0.5));
+                    targetY = Math.max(-MAX_MOVE, Math.min(MAX_MOVE, (e.beta - 45) * 0.5));
+                }
+            }, { passive: true });
+        }
+        requestAnimationFrame(update);
+    })();
+    (function() {
+        const pw = document.getElementById('pwField'), toggle = document.getElementById('pwToggle');
+        const eyeOpen = toggle.querySelector('.eye-open'), eyeClosed = toggle.querySelector('.eye-closed');
+        toggle.addEventListener('click', () => {
+            const isPw = pw.type === 'password';
+            pw.type = isPw ? 'text' : 'password';
+            eyeOpen.style.display = isPw ? 'none' : '';
+            eyeClosed.style.display = isPw ? '' : 'none';
+        });
+    })();
+    </script>
+</body>
+</html>

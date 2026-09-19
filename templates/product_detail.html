@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - {{ settings.get('shop_name', 'Denis Snack') }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    {% include 'partials/theme_head.html' %}
+</head>
+<body class="bg-light font-body {{ theme.body_class }}">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center gap-2"><div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-lg">{{ theme.logo_text or 'D' }}</span>{% endif %}</div><span class="font-display font-bold text-xl text-dark">{{ settings.get('shop_name', 'Denis Snack') }}</span></a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="/" class="text-dark hover:text-primary transition font-medium">Beranda</a>
+                    <a href="/#menu" class="text-dark hover:text-primary transition font-medium">Menu</a>
+                    <a href="/#keranjang" class="bg-primary text-white px-5 py-2 rounded-full hover:bg-orange-600 transition font-semibold flex items-center gap-2">🛒 <span id="cart-count" class="bg-white text-primary rounded-full w-5 h-5 text-xs flex items-center justify-center font-bold hidden">0</span> Keranjang</a>
+                    {% if session.get('customer_id') %}
+                    <a href="/profile" class="text-dark hover:text-primary font-medium">👤 {{ session.get('customer_name') }}</a>
+                    {% else %}
+                    <a href="/login" class="text-dark hover:text-primary font-medium">Masuk</a>
+                    {% endif %}
+                </div>
+                <button onclick="history.back()" class="md:hidden text-dark text-2xl">←</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <nav class="text-sm text-gray-400 mb-6"><a href="/" class="hover:text-primary">Beranda</a> / <a href="/#menu" class="hover:text-primary">Menu</a> / <span class="text-dark">{{ product.name }}</span></nav>
+
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <div class="h-72 md:h-96 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+                    {% if product.photo %}
+                    <img src="/uploads/{{ product.photo }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <span class="text-9xl">{{ product.emoji }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                {% if product.badge %}<span class="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold mb-3">{{ product.badge }}</span>{% endif %}
+                {% if product.cat_name %}<span class="inline-block bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-sm mb-3 ml-2">{{ product.cat_name }}</span>{% endif %}
+                <h1 class="font-display text-3xl md:text-4xl font-extrabold text-dark mb-4">{{ product.name }}</h1>
+                {% if product.sku %}<p class="text-gray-400 text-sm mb-3">SKU: {{ product.sku }}</p>{% endif %}
+                <p class="text-gray-600 leading-relaxed mb-6">{{ product.description }}</p>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-dark mb-3">Pilih Berat:</label>
+                    <div class="flex flex-wrap gap-3" id="variant-options">
+                        {% for v in variants %}
+                        <button type="button" onclick="selectVariant({{ v.id }}, {{ v.price }}, {{ v.stock }}, '{{ v.weight_label }}')"
+                            class="variant-btn px-5 py-3 rounded-xl border-2 border-gray-200 font-semibold transition hover:border-primary {% if loop.first %}border-primary bg-primary/5{% endif %}"
+                            data-vid="{{ v.id }}" data-price="{{ v.price }}" data-stock="{{ v.stock }}" data-weight="{{ v.weight_label }}">
+                            <span class="block text-lg">{{ v.weight_label }}</span>
+                            <span class="block text-primary font-bold text-sm">Rp {{ "{:,.0f}".format(v.price).replace(",", ".") }}</span>
+                            <span class="block text-gray-400 text-xs">Stok: {{ v.stock }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                    <div class="flex justify-between items-center mb-2"><span class="text-gray-500">Harga Satuan:</span><span class="font-bold text-dark text-lg" id="detail-price">Rp {{ "{:,.0f}".format(variants[0].price if variants else 0).replace(",", ".") }}</span></div>
+                    <div class="flex justify-between items-center mb-3"><span class="text-gray-500">Stok Tersedia:</span><span class="font-semibold" id="detail-stock">{{ variants[0].stock if variants else 0 }} pcs</span></div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="text-gray-500">Jumlah:</span>
+                        <div class="flex items-center border rounded-xl">
+                            <button type="button" onclick="changeQty(-1)" class="w-10 h-10 flex items-center justify-center text-lg font-bold hover:bg-gray-100 rounded-l-xl">-</button>
+                            <input type="number" id="qty-input" value="1" min="1" max="{{ variants[0].stock if variants else 1 }}" readonly class="w-16 h-10 text-center font-semibold border-x outline-none">
+                            <button type="button" onclick="changeQty(1)" class="w-10 h-10 flex items-center justify-center text-lg font-bold hover:bg-gray-100 rounded-r-xl">+</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center border-t pt-3"><span class="font-semibold text-dark">Subtotal:</span><span class="font-display font-bold text-xl text-primary" id="detail-subtotal">Rp {{ "{:,.0f}".format(variants[0].price if variants else 0).replace(",", ".") }}</span></div>
+                </div>
+
+                <button onclick="addDetailToCart()" id="add-to-cart-btn" class="w-full bg-primary text-white py-4 rounded-xl hover:bg-orange-600 transition font-bold text-lg shadow-lg shadow-primary/30 flex items-center justify-center gap-2">
+                    🛒 Tambah ke Keranjang
+                </button>
+            </div>
+        </div>
+
+        {% if related %}
+        <section class="mt-16">
+            <h2 class="font-display text-2xl font-bold text-dark mb-6">Produk Lainnya</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {% for r in related %}
+                <a href="/product/{{ r.id }}" class="bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden group">
+                    <div class="h-32 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:scale-105 transition">
+                        {% if r.photo %}<img src="/uploads/{{ r.photo }}" class="w-full h-full object-cover"><span class="text-4xl">{{ r.emoji }}</span>{% else %}<span class="text-4xl">{{ r.emoji }}</span>{% endif %}
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-display font-bold text-sm text-dark truncate">{{ r.name }}</h3>
+                        <p class="text-primary font-bold text-sm">Mulai Rp {{ "{:,.0f}".format(r.base_price).replace(",", ".") }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <footer class="bg-dark text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">&copy; 2026 {{ settings.get('shop_name', 'Denis Snack') }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    let selectedVariant = {{ variants[0].id if variants else 0 }};
+    let selectedPrice = {{ variants[0].price if variants else 0 }};
+    let selectedStock = {{ variants[0].stock if variants else 0 }};
+    let selectedWeight = '{{ variants[0].weight_label if variants else "" }}';
+    let qty = 1;
+    const productName = '{{ product.name | e }}';
+    const productEmoji = '{{ product.emoji }}';
+    const productId = {{ product.id }};
+
+    function selectVariant(vid, price, stock, weight) {
+        selectedVariant = vid; selectedPrice = price; selectedStock = stock; selectedWeight = weight;
+        qty = 1;
+        document.querySelectorAll('.variant-btn').forEach(b => { b.classList.remove('border-primary', 'bg-primary/5'); b.classList.add('border-gray-200'); });
+        document.querySelector(`[data-vid="${vid}"]`).classList.remove('border-gray-200');
+        document.querySelector(`[data-vid="${vid}"]`).classList.add('border-primary', 'bg-primary/5');
+        document.getElementById('detail-price').textContent = 'Rp ' + price.toLocaleString('id');
+        document.getElementById('detail-stock').textContent = stock + ' pcs';
+        document.getElementById('qty-input').value = 1;
+        document.getElementById('qty-input').max = stock;
+        updateSubtotal();
+    }
+
+    function changeQty(d) {
+        qty = Math.max(1, Math.min(selectedStock, qty + d));
+        document.getElementById('qty-input').value = qty;
+        updateSubtotal();
+    }
+
+    function updateSubtotal() { document.getElementById('detail-subtotal').textContent = 'Rp ' + (selectedPrice * qty).toLocaleString('id'); }
+
+    function addDetailToCart() {
+        if (selectedStock <= 0) { alert('Produk habis!'); return; }
+        const ok = addToCart(productId, selectedVariant, productName, selectedPrice, productEmoji, selectedWeight, selectedStock, qty);
+        if (ok) alert('Produk berhasil ditambahkan ke keranjang!');
+    }
+
+    let cart = JSON.parse(localStorage.getItem('denis_cart') || '[]');
+
+    function saveCart() { localStorage.setItem('denis_cart', JSON.stringify(cart)); updateCartCount(); }
+
+    function updateCartCount() {
+        const badge = document.getElementById('cart-count');
+        const tq = cart.reduce((s, i) => s + i.qty, 0);
+        if (badge) { badge.textContent = tq; badge.classList.toggle('hidden', tq === 0); }
+    }
+
+    function addToCart(id, variantId, name, price, emoji, weightLabel, stock, qtyToAdd) {
+        const key = `${id}-${variantId}`;
+        const addQty = qtyToAdd || 1;
+        const existing = cart.find(i => i.key === key);
+        const currentQty = existing ? existing.qty : 0;
+        if (currentQty + addQty > stock) { alert('Stok tidak cukup!'); return false; }
+        if (existing) {
+            existing.qty += addQty;
+            existing.stock = stock;
+        } else {
+            cart.push({ key, product_id: id, variant_id: variantId, name, price, emoji, weight_label: weightLabel, qty: addQty, stock });
+        }
+        saveCart();
+        return true;
+    }
+
+    document.getElementById('qty-input').addEventListener('change', function() { qty = Math.max(1, Math.min(selectedStock, parseInt(this.value)||1)); this.value = qty; updateSubtotal(); });
+    updateCartCount();
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #{{ order.invoice_no }} - Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body{font-family:'Inter',sans-serif}
+        h1,h2,h3,.font-display{font-family:'Poppins',sans-serif}
+        @media print {
+            body{background:#fff}
+            .no-print{display:none!important}
+            .print-area{box-shadow:none;border:none}
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 lg:p-8">
+    <div class="no-print max-w-2xl mx-auto mb-6 flex gap-3">
+        <button onclick="window.print()" class="bg-primary text-white px-6 py-3 rounded-xl hover:bg-orange-600 transition font-semibold shadow-lg shadow-primary/30 flex items-center gap-2">🖨️ Cetak Invoice</button>
+        <a href="/admin/orders/{{ order.id }}" class="bg-gray-200 text-gray-600 px-6 py-3 rounded-xl hover:bg-gray-300 transition font-semibold">← Kembali</a>
+    </div>
+
+    <div class="print-area max-w-2xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div class="text-center border-b pb-6 mb-6">
+            <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
+                <span class="font-bold text-white text-xl">D</span>
+            </div>
+            <h1 class="font-display font-bold text-2xl text-gray-800">{{ settings.get('shop_name', 'Denis Snack') }}</h1>
+            <p class="text-gray-500 text-sm">{{ settings.get('address', '') }}</p>
+            <p class="text-gray-500 text-sm">WA: {{ settings.get('whatsapp', '') }} | {{ settings.get('email', '') }}</p>
+        </div>
+
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h2 class="font-display font-bold text-lg text-gray-800">INVOICE</h2>
+                <p class="text-sm text-gray-600">No: <span class="font-semibold">{{ order.invoice_no }}</span></p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-500">Tanggal</p>
+                <p class="text-sm font-semibold text-gray-800">{{ order.created_at }}</p>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-xl p-4 mb-6">
+            <h3 class="font-display font-semibold text-sm text-gray-600 mb-2">Ditujukan Kepada:</h3>
+            <p class="font-semibold text-gray-800">{{ order.customer_name }}</p>
+            <p class="text-sm text-gray-600">{{ order.phone }}</p>
+            {% if order.address %}
+            <p class="text-sm text-gray-600">{{ order.address }}</p>
+            {% endif %}
+            {% if order.district or order.city %}
+            <p class="text-sm text-gray-600">{{ order.district }}{% if order.district and order.city %}, {% endif %}{{ order.city }}, {{ order.province or '' }} {{ order.postal_code or '' }}</p>
+            {% endif %}
+        </div>
+
+        <table class="w-full text-sm mb-6">
+            <thead>
+                <tr class="border-b">
+                    <th class="text-left py-2 font-semibold text-gray-600">Item</th>
+                    <th class="text-center py-2 font-semibold text-gray-600">Qty</th>
+                    <th class="text-right py-2 font-semibold text-gray-600">Harga</th>
+                    <th class="text-right py-2 font-semibold text-gray-600">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y">
+                {% for item in order.items|fromjson %}
+                <tr>
+                    <td class="py-3">
+                        <p class="font-semibold text-gray-800">{{ item.emoji }} {{ item.name }}</p>
+                        <p class="text-xs text-gray-500">{{ item.weight }}</p>
+                    </td>
+                    <td class="py-3 text-center text-gray-600">{{ item.qty }}</td>
+                    <td class="py-3 text-right text-gray-600">{{ item.price|format_rp }}</td>
+                    <td class="py-3 text-right font-semibold text-gray-800">{{ (item.price * item.qty)|format_rp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="border-t pt-4 space-y-2">
+            <div class="flex justify-between text-sm"><span class="text-gray-500">Subtotal</span><span class="font-semibold">{{ order.subtotal|format_rp }}</span></div>
+            <div class="flex justify-between text-sm"><span class="text-gray-500">Biaya Pengiriman</span><span class="font-semibold">{{ order.shipping_cost|format_rp }}</span></div>
+            {% if order.discount > 0 %}
+            <div class="flex justify-between text-sm"><span class="text-gray-500">Diskon</span><span class="font-semibold text-red-500">-{{ order.discount|format_rp }}</span></div>
+            {% endif %}
+            <div class="flex justify-between text-lg font-bold border-t pt-2"><span class="font-display">TOTAL</span><span class="text-primary">{{ order.total|format_rp }}</span></div>
+        </div>
+
+        <div class="border-t mt-6 pt-6 grid grid-cols-2 gap-6 text-sm">
+            <div>
+                <h3 class="font-display font-semibold text-gray-600 mb-2">Pembayaran</h3>
+                <p class="text-gray-800">Metode: <span class="font-semibold">{{ order.payment_method or '-' }}</span></p>
+                <p class="text-gray-800">Status: 
+                    {% if order.payment_status == 'paid' %}
+                    <span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs font-semibold">Lunas</span>
+                    {% else %}
+                    <span class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs font-semibold">Belum Bayar</span>
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <h3 class="font-display font-semibold text-gray-600 mb-2">Pengiriman</h3>
+                <p class="text-gray-800">Kurir: <span class="font-semibold">{{ order.courier or '-' }}</span></p>
+                <p class="text-gray-800">Resi: <span class="font-semibold text-xs">{{ order.tracking_number or '-' }}</span></p>
+            </div>
+        </div>
+
+        {% if order.notes %}
+        <div class="border-t mt-6 pt-4">
+            <h3 class="font-display font-semibold text-gray-600 text-sm mb-1">Catatan:</h3>
+            <p class="text-sm text-gray-600">{{ order.notes }}</p>
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-8 pt-4 border-t">
+            <p class="text-gray-400 text-xs">Terima kasih telah berbelanja di {{ settings.get('shop_name', 'Denis Snack') }}!</p>
+        </div>
+    </div>
+</body>
+</html>

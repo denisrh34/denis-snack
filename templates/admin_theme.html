@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tampilan Website - Admin Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif}h1,h2,h3,.font-display{font-family:'Poppins',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-dark text-white z-50 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span class="font-bold">D</span></div>
+                <div><p class="font-bold">Denis Snack</p><p class="text-xs text-gray-400">Admin Panel</p></div>
+            </div>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📊 Dashboard</a>
+            <a href="/admin/products" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📦 Produk</a>
+            <a href="/admin/categories" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🏷️ Kategori</a>
+            <a href="/admin/stock" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📋 Stok</a>
+            <a href="/admin/orders" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🛒 Pesanan</a>
+            <a href="/admin/customers" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">👥 Pelanggan</a>
+            <a href="/admin/promos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎯 Promo</a>
+            <a href="/admin/reports" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📈 Laporan</a>
+            <a href="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">⚙️ Pengaturan</a>
+            <a href="/admin/theme" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-semibold">🎨 Tampilan Website</a>
+            <div class="border-t border-gray-700 my-4"></div>
+            <a href="/" target="_blank" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🌐 Lihat Website</a>
+            <a href="/admin/logout" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 text-red-400 transition">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <button id="sidebarBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-dark text-white w-10 h-10 rounded-xl flex items-center justify-center">☰</button>
+
+    <main class="lg:ml-64 p-6 lg:p-8">
+        <div class="mb-8">
+            <h1 class="font-display text-2xl lg:text-3xl font-bold text-gray-800">🎨 Tampilan Website</h1>
+            <p class="text-gray-500">Kustomisasi warna, font, background, logo, dan tata letak toko tanpa mengubah kode.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for category, message in messages %}
+                <div class="px-4 py-3 rounded-xl text-sm font-semibold {% if category == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" id="themeForm" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">🎨 Tema & Warna</h2>
+                    <p class="text-sm text-gray-500 mb-5">Warna dasar seluruh website.</p>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Utama (Primary)</label><input type="color" name="primary" value="{{ theme.primary }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Sekunder</label><input type="color" name="secondary" value="{{ theme.secondary }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Aksen</label><input type="color" name="accent" value="{{ theme.accent }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Sukses</label><input type="color" name="success" value="{{ theme.success }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Info</label><input type="color" name="info" value="{{ theme.info }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Gelap (Teks/Nav)</label><input type="color" name="dark" value="{{ theme.dark }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Warna Terang (Background)</label><input type="color" name="light" value="{{ theme.light }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">🖼️ Background</h2>
+                    <p class="text-sm text-gray-500 mb-5">Latar belakang halaman toko.</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Background</label>
+                            <select name="bg_type" class="w-full md:w-64 px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" onchange="toggleBg(); previewLive()">
+                                <option value="color" {% if theme.bg_type == 'color' %}selected{% endif %}>Warna solid</option>
+                                <option value="gradient" {% if theme.bg_type == 'gradient' %}selected{% endif %}>Gradasi warna</option>
+                                <option value="image" {% if theme.bg_type == 'image' %}selected{% endif %}>Gambar</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4" id="gradientBox">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Gradasi dari</label><input type="color" name="bg_gradient_from" value="{{ theme.bg_gradient_from }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Gradasi ke</label><input type="color" name="bg_gradient_to" value="{{ theme.bg_gradient_to }}" class="w-full h-10 rounded-lg border cursor-pointer" oninput="previewLive()"></div>
+                        </div>
+                        <div id="imageBox">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Gambar Background</label>
+                            <div class="flex items-center gap-3">
+                                <input type="hidden" name="bg_image" value="{{ theme.bg_image }}">
+                                <label class="bg-secondary text-white px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer hover:bg-blue-700 transition">⤴️ Upload Gambar<input type="file" accept="image/*" class="hidden" onchange="uploadThemeFile(this, 'bg_image')"></label>
+                                {% if theme.bg_image %}<span class="text-xs text-gray-500">Terkini: {{ theme.bg_image }}</span>{% endif %}
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">Format: PNG, JPG, WEBP. Maks 5MB.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">🔤 Tipografi</h2>
+                    <p class="text-sm text-gray-500 mb-5">Font judul, teks, dan ukuran dasar.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Font Judul (Display)</label>
+                            <select name="font_display" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" onchange="previewLive()">
+                                {% for f in ['Poppins','Montserrat','Nunito','Bree Serif','Playfair Display','DM Serif Display'] %}
+                                <option value="{{ f }}" {% if theme.font_display == f %}selected{% endif %}>{{ f }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Font Teks (Body)</label>
+                            <select name="font_body" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" onchange="previewLive()">
+                                {% for f in ['Inter','Poppins','Nunito','Open Sans','Roboto','Lato'] %}
+                                <option value="{{ f }}" {% if theme.font_body == f %}selected{% endif %}>{{ f }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div><label class="block text-xs font-semibold text-gray-600 mb-1">Ukuran Font Dasar</label>
+                            <select name="font_scale" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white" onchange="previewLive()">
+                                <option value="small" {% if theme.font_scale == 'small' %}selected{% endif %}>Kecil (14px)</option>
+                                <option value="normal" {% if theme.font_scale == 'normal' %}selected{% endif %}>Normal (16px)</option>
+                                <option value="large" {% if theme.font_scale == 'large' %}selected{% endif %}>Besar (18px)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">🏠 Hero Banner & Logo</h2>
+                    <p class="text-sm text-gray-500 mb-5">Banner utama di halaman depan dan logo toko.</p>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Judul Hero</label><input type="text" name="hero_title" value="{{ theme.hero_title }}" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Subjudul Hero</label><input type="text" name="hero_subtitle" value="{{ theme.hero_subtitle }}" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm"></div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Gaya Hero</label>
+                            <select name="hero_style" class="w-full md:w-64 px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                                <option value="default" {% if theme.hero_style == 'default' %}selected{% endif %}>Gradasi warna (default)</option>
+                                <option value="image" {% if theme.hero_style == 'image' %}selected{% endif %}>Gambar banner</option>
+                            </select>
+                        </div>
+                        <div id="heroImageBox">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Gambar Hero</label>
+                            <div class="flex items-center gap-3">
+                                <input type="hidden" name="hero_image" value="{{ theme.hero_image }}">
+                                <label class="bg-secondary text-white px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer hover:bg-blue-700 transition">⤴️ Upload Gambar<input type="file" accept="image/*" class="hidden" onchange="uploadThemeFile(this, 'hero_image')"></label>
+                                {% if theme.hero_image %}<span class="text-xs text-gray-500">Terkini: {{ theme.hero_image }}</span>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">🖥️ Tata Letak</h2>
+                    <p class="text-sm text-gray-500 mb-5">Pengaturan tampilan menu dan halaman utama.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Kolom Daftar Produk</label>
+                            <select name="product_cols" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                                <option value="2" {% if theme.product_cols == '2' %}selected{% endif %}>2 kolom</option>
+                                <option value="3" {% if theme.product_cols == '3' %}selected{% endif %}>3 kolom</option>
+                                <option value="4" {% if theme.product_cols == '4' %}selected{% endif %}>4 kolom</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end pb-2">
+                            <label class="inline-flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" name="show_featured" {% if theme.show_featured == '1' %}checked{% endif %} class="w-5 h-5 accent-[#FF6B35]">
+                                <span class="text-sm font-semibold text-gray-700">Tampilkan produk unggulan</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">🔘 Gaya Tombol & Kartu</h2>
+                    <p class="text-sm text-gray-500 mb-5">Bentuk tombol dan kartu produk di seluruh website.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-2">Gaya Tombol</label>
+                            <div class="flex gap-3">
+                                {% for v, l in [('rounded','Bulat'),('pill','Pill'),('sharp','Tajam')] %}
+                                <label class="flex-1 border rounded-xl p-3 text-center cursor-pointer hover:bg-gray-50 {% if theme.button_style == v %}border-primary bg-primary/5{% endif %}">
+                                    <input type="radio" name="button_style" value="{{ v }}" {% if theme.button_style == v %}checked{% endif %} class="sr-only" onchange="previewLive()">
+                                    <span class="text-xs font-semibold text-gray-700">{{ l }}</span>
+                                    <div class="mt-2"><button type="button" class="w-full py-1.5 text-xs font-semibold text-white" style="background-color:var(--pv-primary);{% if v=='pill' %}border-radius:9999px;{% elif v=='sharp' %}border-radius:0;{% else %}border-radius:8px;{% endif %}">Tombol</button></div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-2">Gaya Kartu</label>
+                            <div class="flex gap-3">
+                                {% for v, l in [('rounded','Bulat'),('round','Sangat Bulat'),('sharp','Tajam')] %}
+                                <label class="flex-1 border rounded-xl p-3 text-center cursor-pointer hover:bg-gray-50 {% if theme.card_style == v %}border-primary bg-primary/5{% endif %}">
+                                    <input type="radio" name="card_style" value="{{ v }}" {% if theme.card_style == v %}checked{% endif %} class="sr-only" onchange="previewLive()">
+                                    <span class="text-xs font-semibold text-gray-700">{{ l }}</span>
+                                    <div class="mt-2"><div class="h-8 border-2 border-gray-300 bg-white" style="{% if v=='round' %}border-radius:16px;{% elif v=='sharp' %}border-radius:0;{% else %}border-radius:10px;{% endif %}"></div></div>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-1">✨ Logo & Animasi</h2>
+                    <p class="text-sm text-gray-500 mb-5">Logo yang tampil di bilah navigasi dan footer, serta transisi halus.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Jenis Logo</label>
+                            <select name="logo_type" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm bg-white">
+                                <option value="emoji" {% if theme.logo_type == 'emoji' %}selected{% endif %}>Huruf / Teks</option>
+                                <option value="image" {% if theme.logo_type == 'image' %}selected{% endif %}>Gambar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Huruf Logo (jika tipe huruf)</label>
+                            <input type="text" name="logo_text" value="{{ theme.logo_text }}" maxlength="3" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">Gambar Logo</label>
+                            <div class="flex items-center gap-3">
+                                <input type="hidden" name="logo_image" value="{{ theme.logo_image }}">
+                                <label class="bg-secondary text-white px-4 py-2.5 rounded-xl text-sm font-semibold cursor-pointer hover:bg-blue-700 transition">⤴️ Upload Logo<input type="file" accept="image/*" class="hidden" onchange="uploadThemeFile(this, 'logo_image')"></label>
+                                {% if theme.logo_image %}<span class="text-xs text-gray-500">Terkini: {{ theme.logo_image }}</span>{% endif %}
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">Dimuat di dalam lingkaran. Gunakan gambar persegi (mis. 200×200).</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="inline-flex items-center gap-3 cursor-pointer">
+                                <input type="checkbox" name="animation" {% if theme.animation == '1' %}checked{% endif %} class="w-5 h-5 accent-[#FF6B35]" onchange="previewLive()">
+                                <span class="text-sm font-semibold text-gray-700">Aktifkan animasi & transisi</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" class="bg-primary text-white px-8 py-3 rounded-xl hover:bg-orange-600 transition font-semibold shadow-lg shadow-primary/30">💾 Simpan Tema</button>
+                    <button type="reset" class="bg-gray-100 text-gray-600 px-6 py-3 rounded-xl hover:bg-gray-200 transition font-semibold">Reset Form</button>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
+                    <h2 class="font-display font-bold text-lg text-gray-800 mb-4">👁️ Pratinjau</h2>
+                    <div class="space-y-4 text-sm">
+                        <div class="flex items-center gap-3">
+                            <div id="pv-logo" class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg" style="background-color:var(--pv-primary)">{{ theme.logo_text or 'D' }}</div>
+                            <div id="pv-brand" class="font-semibold text-gray-800">Denis Snack</div>
+                        </div>
+                        <div id="pv-title" class="font-display text-xl font-extrabold text-gray-800">Judul Hero Toko</div>
+                        <div class="flex gap-2">
+                            <button type="button" id="pv-btn" class="px-5 py-2 text-white font-semibold" style="background-color:var(--pv-primary);border-radius:var(--pv-radius)">Tombol Utama</button>
+                            <button type="button" id="pv-btn2" class="px-5 py-2 text-white font-semibold" style="background-color:var(--pv-secondary);border-radius:var(--pv-radius)">Tombol Kedua</button>
+                        </div>
+                        <div>
+                            <div class="flex gap-2 items-center">
+                                <span class="w-6 h-6 rounded-full" style="background-color:var(--pv-primary)"></span>
+                                <span class="w-6 h-6 rounded-full" style="background-color:var(--pv-secondary)"></span>
+                                <span class="w-6 h-6 rounded-full" style="background-color:var(--pv-accent)"></span>
+                                <span class="w-6 h-6 rounded-full" style="background-color:var(--pv-success)"></span>
+                                <span class="w-6 h-6 rounded-full" style="background-color:var(--pv-info)"></span>
+                                <span class="w-6 h-6 rounded-full" style="background-color:var(--pv-dark)"></span>
+                            </div>
+                        </div>
+                        <div id="pv-card" class="border border-gray-200 p-4 bg-white" style="border-radius:var(--pv-cardr)">
+                            <p class="font-semibold text-gray-700 mb-1">Kartu Contoh</p>
+                            <p class="text-gray-500 text-xs">Gaya kartu mengikuti pengaturan di atas.</p>
+                        </div>
+                        <p id="pv-font-note" class="text-xs text-gray-400">Font: <span id="pv-fonts">Poppins / Inter</span></p>
+                    </div>
+                </div>
+
+                <form method="POST" action="/admin/theme/reset" onsubmit="return confirm('Kembalikan tema ke pengaturan default?')" class="bg-red-50 border border-red-100 rounded-2xl p-6">
+                    <h2 class="font-display font-bold text-red-600 mb-1">↩️ Reset Tema</h2>
+                    <p class="text-sm text-red-400 mb-4">Kembalikan semua pengaturan tampilan ke default Denis Snack.</p>
+                    <button type="submit" class="bg-red-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-red-600 transition w-full">Kembalikan ke Default</button>
+                </form>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-sm text-gray-500">
+                    <p class="font-semibold text-gray-700 mb-1">💡 Tips</p>
+                    Klik <b>Lihat Website</b> di menu untuk melihat hasil tema secara langsung. Warna default mengikuti identitas Denis Snack.
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('sidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+
+        function toggleBg() {
+            const v = themeForm.bg_type.value;
+            document.getElementById('gradientBox').style.display = (v === 'gradient') ? 'grid' : 'none';
+            document.getElementById('imageBox').style.display = (v === 'image') ? 'block' : 'none';
+        }
+
+        function previewLive() {
+            const f = themeForm;
+            document.body.style.setProperty('--pv-primary', f.primary.value);
+            document.body.style.setProperty('--pv-secondary', f.secondary.value);
+            document.body.style.setProperty('--pv-accent', f.accent.value || '#FFF200');
+            document.body.style.setProperty('--pv-success', f.success.value || '#10B981');
+            document.body.style.setProperty('--pv-info', f.info.value || '#108AB1');
+            document.body.style.setProperty('--pv-dark', f.dark.value);
+            document.body.style.setProperty('--pv-radius', (f.button_style.value === 'pill' ? '9999px' : f.button_style.value === 'sharp' ? '0' : '8px'));
+            document.body.style.setProperty('--pv-cardr', (f.card_style.value === 'round' ? '16px' : f.card_style.value === 'sharp' ? '0' : '10px'));
+            document.getElementById('pv-logo').textContent = f.logo_text.value || 'D';
+            document.getElementById('pv-fonts').textContent = f.font_display.value + ' / ' + f.font_body.value;
+            document.getElementById('pv-title').style.fontFamily = `'${f.font_display.value}', sans-serif`;
+        }
+
+        async function uploadThemeFile(input, target) {
+            const f = input.files[0];
+            if (!f) return;
+            const fd = new FormData();
+            fd.append('file', f);
+            fd.append('type', target.replace('_image', ''));
+            const r = await fetch('/admin/theme/upload', { method: 'POST', body: fd });
+            const res = await r.json();
+            if (res.success) {
+                themeForm[target].value = res.filename;
+                flashNote(res.message || 'Gambar berhasil diunggah', true);
+            } else {
+                flashNote(res.message || 'Upload gagal', false);
+            }
+            input.value = '';
+        }
+
+        function flashNote(msg, ok) {
+            let el = document.createElement('div');
+            el.className = (ok ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') + ' px-4 py-3 rounded-xl text-sm font-semibold mb-4';
+            el.textContent = msg;
+            document.querySelector('main').prepend(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        toggleBg();
+        previewLive();
+    </script>
+</body>
+</html>

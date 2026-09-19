@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya - Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    {% include 'partials/theme_head.html' %}
+</head>
+<body class="bg-gray-50 min-h-screen {{ theme.body_class }}">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center gap-2"><div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center overflow-hidden">{% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-lg">{{ theme.logo_text or 'D' }}</span>{% endif %}</div><span class="font-display font-bold text-xl text-dark">{{ settings.get('shop_name', 'Denis Snack') }}</span></a>
+                <div class="flex items-center gap-4"><a href="/" class="text-dark hover:text-primary font-medium">Beranda</a><span class="text-dark font-semibold">👤 {{ customer.name }}</span><a href="/logout" class="text-red-500 hover:text-red-600 font-medium">Logout</a></div>
+            </div>
+        </div>
+    </nav>
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        <h1 class="font-display text-3xl font-bold text-gray-800 mb-8">Profil Saya</h1>
+        <div class="bg-white rounded-2xl shadow-sm border p-6 lg:p-8 mb-8">
+            <h2 class="font-display font-bold text-xl text-gray-800 mb-6">Informasi Akun</h2>
+            <div class="grid sm:grid-cols-2 gap-6">
+                <div><p class="text-gray-400 text-sm">Nama</p><p class="font-semibold text-gray-800">{{ customer.name }}</p></div>
+                <div><p class="text-gray-400 text-sm">Email</p><p class="font-semibold text-gray-800">{{ customer.email }}</p></div>
+                <div><p class="text-gray-400 text-sm">No. WhatsApp</p><p class="font-semibold text-gray-800">{{ customer.phone or '-' }}</p></div>
+                <div><p class="text-gray-400 text-sm">Alamat</p><p class="font-semibold text-gray-800">{{ customer.address or '-' }}</p></div>
+                <div><p class="text-gray-400 text-sm">Terdaftar Sejak</p><p class="font-semibold text-gray-800">{{ customer.created_at }}</p></div>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl shadow-sm border p-6 lg:p-8">
+            <h2 class="font-display font-bold text-xl text-gray-800 mb-6">Riwayat Pesanan</h2>
+            {% if orders %}
+            <div class="space-y-4">
+                {% for o in orders %}
+                <a href="/my-orders/{{ o.id }}" class="block border rounded-xl p-4 hover:bg-gray-50 transition">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-display font-bold text-gray-800">#{{ o.invoice_no or o.id }}</span>
+                                {% if o.status == 'pending' %}<span class="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs font-semibold">⏳ Pending</span>
+                                {% elif o.status == 'paid' %}<span class="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs font-semibold">💳 Dibayar</span>
+                                {% elif o.status == 'processing' %}<span class="bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full text-xs font-semibold">📦 Diproses</span>
+                                {% elif o.status == 'shipped' %}<span class="bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full text-xs font-semibold">🚚 Dikirim</span>
+                                {% elif o.status == 'completed' %}<span class="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs font-semibold">✅ Selesai</span>
+                                {% elif o.status == 'cancelled' %}<span class="bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-xs font-semibold">❌ Dibatalkan</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-gray-400 text-xs">{{ o.created_at }}</p>
+                        </div>
+                        <p class="font-display font-bold text-green-600">Rp {{ "{:,.0f}".format(o.total).replace(",", ".") }}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-8">
+                <span class="text-5xl block mb-4">🛒</span>
+                <p class="text-gray-400">Belum ada pesanan</p>
+                <a href="/" class="inline-block mt-4 bg-primary text-white px-6 py-2 rounded-full hover:bg-orange-600 transition font-semibold">Mulai Belanja</a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

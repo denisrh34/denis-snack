@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - Admin Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif}h1,h2,h3,.font-display{font-family:'Poppins',sans-serif}</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-dark text-white z-50 transform -translate-x-full lg:translate-x-0 transition-transform overflow-y-auto">
+        <div class="p-6 border-b border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><span class="font-bold">D</span></div>
+                <div><p class="font-bold">Denis Snack</p><p class="text-xs text-gray-400">Admin Panel</p></div>
+            </div>
+        </div>
+        <nav class="p-4 space-y-1">
+            <a href="/admin" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📊 Dashboard</a>
+            <a href="/admin/products" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📦 Produk</a>
+            <a href="/admin/categories" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🏷️ Kategori</a>
+            <a href="/admin/stock" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📋 Stok</a>
+            <a href="/admin/orders" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🛒 Pesanan</a>
+            <a href="/admin/customers" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">👥 Pelanggan</a>
+            <a href="/admin/promos" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎯 Promo</a>
+            <a href="/admin/reports" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">📈 Laporan</a>
+            <a href="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/20 text-primary font-semibold">⚙️ Pengaturan</a>
+            <a href="/admin/theme" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🎨 Tampilan Website</a>
+            <div class="border-t border-gray-700 my-4"></div>
+            <a href="/" target="_blank" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/10 transition text-gray-300">🌐 Lihat Website</a>
+            <a href="/admin/logout" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 text-red-400 transition">🚪 Logout</a>
+        </nav>
+    </aside>
+
+    <button id="sidebarBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-dark text-white w-10 h-10 rounded-xl flex items-center justify-center">☰</button>
+
+    <main class="lg:ml-64 p-6 lg:p-8">
+        <div class="mb-8">
+            <h1 class="font-display text-2xl lg:text-3xl font-bold text-gray-800">Pengaturan</h1>
+            <p class="text-gray-500">Atur informasi toko Anda</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="mb-4 p-4 rounded-xl text-sm {% if cat == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8 max-w-2xl">
+            <form method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Toko</label>
+                    <input type="text" name="shop_name" value="{{ settings.get('shop_name', '') }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Denis Snack">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Nomor WhatsApp</label>
+                    <input type="text" name="whatsapp" value="{{ settings.get('whatsapp', '') }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="6281234567890">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat</label>
+                    <textarea name="address" rows="2" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none">{{ settings.get('address', '') }}</textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <input type="email" name="email" value="{{ settings.get('email', '') }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="info@denissnack.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Biaya Pengiriman per Kg (Rp)</label>
+                    <input type="number" name="shipping_fee_per_kg" value="{{ settings.get('shipping_fee_per_kg', '10000') }}" min="0" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="10000">
+                    <p class="text-gray-400 text-xs mt-1">Biaya ongkir otomatis per kilogram</p>
+                </div>
+
+                <div class="border-t pt-6">
+                    <h3 class="font-display text-lg font-bold text-gray-800 mb-4">📱 Notifikasi WhatsApp</h3>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Provider</label>
+                        <select name="wa_provider" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-white">
+                            <option value="fonnte" {% if settings.get('wa_provider') == 'fonnte' %}selected{% endif %}>Fonnte (Indonesia)</option>
+                            <option value="wablas" {% if settings.get('wa_provider') == 'wablas' %}selected{% endif %}>Wablas (Indonesia)</option>
+                            <option value="custom" {% if settings.get('wa_provider') == 'custom' %}selected{% endif %}>Custom Webhook</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">API Key / Token</label>
+                        <input type="password" name="wa_api_key" value="{{ settings.get('wa_api_key', '') }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Masukkan API Key dari provider">
+                        <p class="text-gray-400 text-xs mt-1">Dapatkan dari dashboard provider (Fonnte/Wablas)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Sender ID (Opsional)</label>
+                        <input type="text" name="wa_sender" value="{{ settings.get('wa_sender', '') }}" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Nama pengirim (mis: Denis Snack)">
+                        <p class="text-gray-400 text-xs mt-1">Kosongkan untuk gunakan nomor default provider</p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" name="wa_notify_admin" {% if settings.get('wa_notify_admin') == '1' %}checked{% endif %} class="w-5 h-5 accent-[#FF6B35]">
+                            <label class="text-sm font-semibold text-gray-700 cursor-pointer">Notifikasi ke Admin (pesanan baru)</label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" name="wa_notify_customer" {% if settings.get('wa_notify_customer') == '1' %}checked{% endif %} class="w-5 h-5 accent-[#FF6B35]">
+                            <label class="text-sm font-semibold text-gray-700 cursor-pointer">Notifikasi ke Pelanggan (konfirmasi pesanan)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="bg-primary text-white px-8 py-3 rounded-xl hover:bg-orange-600 transition font-semibold shadow-lg shadow-primary/30">
+                    💾 Simpan Pengaturan
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('sidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+    </script>
+</body>
+</html>

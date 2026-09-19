@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - Denis Snack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'var(--c-primary)',secondary:'var(--c-secondary)',accent:'var(--c-accent)',dark:'var(--c-dark)',light:'var(--c-light)',success:'var(--c-success)',info:'var(--c-info)'},fontFamily:{display:['var(--ft-display)','sans-serif'],body:['var(--ft-body)','sans-serif']}}}}</script>
+    {% include 'partials/theme_head.html' %}
+</head>
+<body class="bg-gradient-to-br from-primary/10 to-orange-100 min-h-screen flex items-center justify-center p-4 {{ theme.body_class }}">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+        <div class="text-center mb-8">
+            <a href="/" class="inline-flex items-center gap-2 mb-6">
+                <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center overflow-hidden">
+                    {% if theme.logo_type == 'image' and theme.logo_image %}<img src="/uploads/{{ theme.logo_image }}" alt="logo" class="w-full h-full object-cover">{% else %}<span class="text-white font-bold text-xl">{{ theme.logo_text or 'D' }}</span>{% endif %}
+                </div>
+                <span class="font-bold text-2xl text-gray-800">{{ settings.get('shop_name', 'Denis Snack') }}</span>
+            </a>
+            <h1 class="text-2xl font-bold text-gray-800">Buat Akun Baru</h1>
+            <p class="text-gray-500 text-sm mt-2">Sudah punya akun? <a href="/login" class="text-primary hover:underline font-semibold">Masuk di sini</a></p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="mb-4 p-3 rounded-xl text-sm {% if cat == 'error' %}bg-red-100 text-red-600{% else %}bg-green-100 text-green-600{% endif %}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="space-y-5">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap *</label>
+                <input type="text" name="name" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Nama Anda">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
+                <input type="email" name="email" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="email@contoh.com">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">No. WhatsApp</label>
+                <input type="tel" name="phone" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="08xxx">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Password *</label>
+                <input type="password" name="password" required minlength="6" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Minimal 6 karakter">
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat</label>
+                <textarea name="address" rows="2" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none" placeholder="Alamat pengiriman Anda"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-orange-600 transition font-semibold text-lg shadow-lg shadow-primary/30">
+                Daftar Sekarang
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="/" class="text-gray-400 hover:text-primary text-sm transition">← Kembali ke Beranda</a>
+        </div>
+    </div>
+</body>
+</html>
