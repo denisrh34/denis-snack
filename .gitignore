@@ -5,6 +5,9 @@ __pycache__/
 instance/
 static/uploads/
 !.gitkeep
+*.jpg
+*.png
+*.jpeg
 *.db-wal
 *.db-shm
 .railway/
